@@ -8,4 +8,8 @@ type Ledger struct {
 	Date        time.Time
 	Description string
 	Balance     Balance
+	GeneralReff uint
+	General     General `gorm:"foreignKey:GeneralReff"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
