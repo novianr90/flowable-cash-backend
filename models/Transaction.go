@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Daily struct {
+type Transaction struct {
 	ID          uint      `gorm:"not null;primaryKey"`
 	Date        time.Time `gorm:"not null"`
 	Name        string    `gorm:"not null"`

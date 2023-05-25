@@ -8,7 +8,7 @@ type General struct {
 	Description string
 	Balance     Balance
 	DailyReff   uint
-	Daily       Daily `gorm:"foreignKey:DailyReff"`
+	Transaction Transaction `gorm:"foreignKey:DailyReff"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }

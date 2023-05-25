@@ -2,6 +2,7 @@ package main
 
 import (
 	"flowable-cash-backend/models"
+	"flowable-cash-backend/router"
 	"fmt"
 	"log"
 	"os"
@@ -23,6 +24,8 @@ func init() {
 
 	connString := os.Getenv("DATABASE_URL")
 
+	fmt.Println(connString)
+
 	db, err = gorm.Open(postgres.Open(connString), &gorm.Config{})
 
 	if err != nil {
@@ -31,9 +34,9 @@ func init() {
 
 	fmt.Println("connected to database")
 
-	db.Debug().AutoMigrate(models.Daily{}, models.General{}, models.Ledger{})
+	db.Debug().AutoMigrate(models.Transaction{}, models.General{}, models.Ledger{})
 }
 
 func main() {
-
+	router.StartServer(db).Run(":8001")
 }
