@@ -63,10 +63,10 @@ func StartServer(db *gorm.DB) *gin.Engine {
 		GraphiQL: true,
 	})
 
-	graphqlGroup := app.Group("/api")
+	graphqlGroup := app.Group("/graphql")
 
 	{
-		graphqlGroup.POST("/graphql", func(c *gin.Context) {
+		graphqlGroup.POST("", func(c *gin.Context) {
 			var query Query
 
 			if err := c.ShouldBindJSON(&query); err != nil {
@@ -91,7 +91,7 @@ func StartServer(db *gorm.DB) *gin.Engine {
 			c.JSON(http.StatusOK, result)
 		})
 
-		graphqlGroup.GET("/graphiql", gin.WrapH(graphiqlHandler))
+		graphqlGroup.GET("", gin.WrapH(graphiqlHandler))
 	}
 
 	return app
