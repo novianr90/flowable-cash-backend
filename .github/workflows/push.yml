@@ -25,4 +25,4 @@ jobs:
         with:
           app-name: flowablecash
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7189529B74D7485AB5BD810300B90053 }}
-          package: flowable-cash-backend.zip
+          package: flowable-cash-backend.exe
