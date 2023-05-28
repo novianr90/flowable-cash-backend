@@ -26,7 +26,7 @@ func init() {
 		database = os.Getenv("DATABASE_NAME")
 	)
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, database)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=True&loc=Local&tls=true", username, password, host, port, database)
 
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
