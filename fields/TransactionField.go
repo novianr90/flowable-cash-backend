@@ -65,7 +65,7 @@ func (f *TransactionField) GetMutationField() graphql.Fields {
 					Description: "Input your total transaction price",
 				},
 				"description": &graphql.ArgumentConfig{
-					Type:        graphql.NewNonNull(graphql.String),
+					Type:        graphql.String,
 					Description: "Input your description",
 				},
 			},
