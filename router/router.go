@@ -1,7 +1,7 @@
 package router
 
 import (
-	field "flowable-cash-backend/Fields"
+	field "flowable-cash-backend/fields"
 	"flowable-cash-backend/resolver"
 	"flowable-cash-backend/services"
 	"log"
