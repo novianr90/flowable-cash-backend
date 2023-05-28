@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -17,11 +17,18 @@ var (
 )
 
 func init() {
-	connString := os.Getenv("DATABASE_URL")
 
-	fmt.Println(connString)
+	var (
+		username   = os.Getenv("DATABASE_USERNAME")
+		password   = os.Getenv("DATABASE_PASSWORD")
+		serverName = os.Getenv("DATABASE_HOST")
+		port       = os.Getenv("DATABASE_PORT")
+		database   = os.Getenv("DATABASE_NAME")
+	)
 
-	db, err = gorm.Open(postgres.Open(connString), &gorm.Config{})
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, serverName, port, database)
+
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal("Error connecting to database:", err)
