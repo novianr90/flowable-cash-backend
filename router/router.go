@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/graphql"
 	"gorm.io/gorm"
+
+	"github.com/graphql-go/handler"
 )
 
 type Query struct {
@@ -55,30 +57,42 @@ func StartServer(db *gorm.DB) *gin.Engine {
 		log.Fatalf("Failed to create schema, error: %v", err)
 	}
 
-	app.POST("/graphql", func(c *gin.Context) {
-		var query Query
+	graphiqlHandler := handler.New(&handler.Config{
+		Schema:   &schema,
+		Pretty:   true,
+		GraphiQL: true,
+	})
 
-		if err := c.ShouldBindJSON(&query); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
+	graphqlGroup := app.Group("/graphql")
+
+	{
+		graphqlGroup.POST("", func(c *gin.Context) {
+			var query Query
+
+			if err := c.ShouldBindJSON(&query); err != nil {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+
+			result := graphql.Do(graphql.Params{
+				Schema:        schema,
+				RequestString: query.Query,
 			})
-			return
-		}
 
-		result := graphql.Do(graphql.Params{
-			Schema:        schema,
-			RequestString: query.Query,
+			if len(result.Errors) > 0 {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"message": err.Error(),
+				})
+				return
+			}
+
+			c.JSON(http.StatusOK, result)
 		})
 
-		if len(result.Errors) > 0 {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-			return
-		}
-
-		c.JSON(http.StatusOK, result)
-	})
+		graphqlGroup.GET("", gin.WrapH(graphiqlHandler))
+	}
 
 	return app
 }
