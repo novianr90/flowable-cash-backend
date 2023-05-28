@@ -1,4 +1,4 @@
-package fields
+package field
 
 import (
 	"flowable-cash-backend/resolver"

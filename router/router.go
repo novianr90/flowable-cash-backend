@@ -1,7 +1,7 @@
 package router
 
 import (
-	fields "flowable-cash-backend/Fields"
+	field "flowable-cash-backend/Fields"
 	"flowable-cash-backend/resolver"
 	"flowable-cash-backend/services"
 	"log"
@@ -27,7 +27,7 @@ func StartServer(db *gorm.DB) *gin.Engine {
 		Service: &transactionService,
 	}
 
-	transactionField := fields.TransactionField{
+	transactionField := field.TransactionField{
 		Resolver: &transactionResolver,
 	}
 
@@ -70,12 +70,12 @@ func StartServer(db *gorm.DB) *gin.Engine {
 			RequestString: query.Query,
 		})
 
-		// if len(result.Errors) > 0 {
-		// 	c.JSON(http.StatusBadRequest, gin.H{
-		// 		"message": err.Error(),
-		// 	})
-		// 	return
-		// }
+		if len(result.Errors) > 0 {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
 
 		c.JSON(http.StatusOK, result)
 	})
