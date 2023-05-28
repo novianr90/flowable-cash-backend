@@ -38,5 +38,7 @@ func init() {
 }
 
 func main() {
-	router.StartServer(db).Run(":8001")
+	PORT := os.Getenv("PORT")
+
+	router.StartServer(db).Run(":" + PORT)
 }
