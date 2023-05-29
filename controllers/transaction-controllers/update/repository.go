@@ -19,11 +19,20 @@ func NewRepositoryUpdate(db *gorm.DB) *repository {
 }
 
 func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
+
 	var transaction models.Transaction
 
-	db := r.db.Model(&transaction)
+	db := r.db.Model(models.Transaction{})
 
-	updateTransaction := db.Where("id = ?", input.ID).Updates(&transaction)
+	newTransaction := models.Transaction{
+		Name:        input.Name,
+		Date:        input.Date,
+		Type:        input.Type,
+		Total:       input.Total,
+		Description: input.Description,
+	}
+
+	updateTransaction := db.Where("id = ?", input.ID).Updates(&newTransaction)
 
 	if updateTransaction.RowsAffected == 0 {
 		return &models.Transaction{}, updateTransaction.Error
@@ -32,6 +41,8 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 	if updateTransaction.Error != nil {
 		return &models.Transaction{}, updateTransaction.Error
 	}
+
+	_ = db.Where("id = ?", input.ID).First(&transaction)
 
 	return &transaction, nil
 }
