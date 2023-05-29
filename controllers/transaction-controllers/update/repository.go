@@ -24,7 +24,7 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 
 	db := r.db.Model(&transaction)
 
-	checkTransactionExist := db.Select("*").Where("id = ?", input.ID).Find(&transaction)
+	checkTransactionExist := db.Where("id = ?", input.ID).Find(&transaction)
 
 	if checkTransactionExist.RowsAffected < 1 {
 		return &transaction, errors.New("no data found")
@@ -38,7 +38,7 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 		Description: transaction.Description,
 	}
 
-	updateTransaction := db.Where("id = ?", input.ID).Omit("created_at").Updates(&transaction)
+	updateTransaction := db.Where("id = ?", input.ID).Updates(&transaction)
 
 	if updateTransaction.Error != nil {
 		return &models.Transaction{}, updateTransaction.Error
