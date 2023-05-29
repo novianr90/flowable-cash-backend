@@ -38,11 +38,13 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 		Description: transaction.Description,
 	}
 
-	updateTransaction := db.Where("id = ?", input.ID).Updates(&transaction)
+	var response models.Transaction
+
+	updateTransaction := db.Where("id = ?", input.ID).Updates(&response)
 
 	if updateTransaction.Error != nil {
 		return &models.Transaction{}, updateTransaction.Error
 	}
 
-	return &transaction, nil
+	return &response, nil
 }
