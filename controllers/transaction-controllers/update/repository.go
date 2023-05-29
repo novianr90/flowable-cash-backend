@@ -38,7 +38,7 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 		Description: transaction.Description,
 	}
 
-	updateTransaction := db.Where("id = ?", input.ID).Updates(&transaction)
+	updateTransaction := db.Where("id = ?", input.ID).Omit("created_at").Updates(&transaction)
 
 	if updateTransaction.Error != nil {
 		return &models.Transaction{}, updateTransaction.Error
