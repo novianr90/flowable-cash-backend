@@ -1,7 +1,6 @@
 package updateTransaction
 
 import (
-	"errors"
 	"flowable-cash-backend/models"
 
 	"gorm.io/gorm"
@@ -24,27 +23,15 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 
 	db := r.db.Model(&transaction)
 
-	checkTransactionExist := db.Where("id = ?", input.ID).Find(&transaction)
+	updateTransaction := db.Where("id = ?", input.ID).Updates(&transaction)
 
-	if checkTransactionExist.RowsAffected < 1 {
-		return &transaction, errors.New("no data found")
+	if updateTransaction.RowsAffected == 0 {
+		return &models.Transaction{}, updateTransaction.Error
 	}
-
-	transaction = models.Transaction{
-		Name:        transaction.Name,
-		Date:        transaction.Date,
-		Type:        transaction.Type,
-		Total:       transaction.Total,
-		Description: transaction.Description,
-	}
-
-	var response models.Transaction
-
-	updateTransaction := db.Where("id = ?", input.ID).Updates(&response)
 
 	if updateTransaction.Error != nil {
 		return &models.Transaction{}, updateTransaction.Error
 	}
 
-	return &response, nil
+	return &transaction, nil
 }
