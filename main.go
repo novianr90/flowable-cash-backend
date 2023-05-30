@@ -15,22 +15,23 @@ import (
 )
 
 func main() {
+	db := configs.Connection()
+
 	PORT := os.Getenv("PORT")
 
 	var wg *sync.WaitGroup
 
-	app := SetupRouter(wg)
+	wg.Add(1)
+	go SetupInternalJob(db, wg)
+
+	app := SetupRouter(db)
 
 	app.Run(":" + PORT)
 
 	wg.Wait()
 }
 
-func SetupRouter(wg *sync.WaitGroup) *gin.Engine {
-	db := configs.Connection()
-
-	wg.Add(1)
-	go SetupInternalJob(db)
+func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	router := gin.Default()
 
@@ -39,12 +40,12 @@ func SetupRouter(wg *sync.WaitGroup) *gin.Engine {
 
 	routes.InitTransactionRoutes(db, router)
 
-	defer wg.Done()
-
 	return router
 }
 
-func SetupInternalJob(db *gorm.DB) {
+func SetupInternalJob(db *gorm.DB, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	sort := sorting.NewSortingInternal(db)
 
 	err := sort.SortTransaction()
