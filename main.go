@@ -3,6 +3,7 @@ package main
 import (
 	"flowable-cash-backend/configs"
 	"flowable-cash-backend/internal/sorting"
+	"fmt"
 	"log"
 	"os"
 
@@ -40,7 +41,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 func SetupInternalJob(db *gorm.DB) {
 	sort := sorting.NewSortingInternal(db)
 
-	err := sort.SortTransaction()
+	result, err := sort.SortTransaction()
+
+	fmt.Println("Sorting is done")
+
+	fmt.Println("Transactions size is", len(result))
 
 	if err != nil {
 		log.Fatal("error while sorting transaction", err)
