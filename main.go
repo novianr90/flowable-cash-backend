@@ -5,7 +5,6 @@ import (
 	"flowable-cash-backend/internal/sorting"
 	"log"
 	"os"
-	"sync"
 
 	"gorm.io/gorm"
 
@@ -19,16 +18,11 @@ func main() {
 
 	PORT := os.Getenv("PORT")
 
-	var wg *sync.WaitGroup
-
-	wg.Add(1)
-	go SetupInternalJob(db, wg)
-
 	app := SetupRouter(db)
 
 	app.Run(":" + PORT)
 
-	wg.Wait()
+	SetupInternalJob(db)
 }
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
@@ -43,9 +37,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	return router
 }
 
-func SetupInternalJob(db *gorm.DB, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func SetupInternalJob(db *gorm.DB) {
 	sort := sorting.NewSortingInternal(db)
 
 	err := sort.SortTransaction()
