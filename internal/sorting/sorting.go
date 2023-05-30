@@ -7,7 +7,7 @@ import (
 )
 
 type Sorting interface {
-	SortTransaction() ([]models.Transaction, error)
+	SortTransaction() error
 }
 
 type sorting struct {
@@ -18,7 +18,7 @@ func NewSortingInternal(db *gorm.DB) *sorting {
 	return &sorting{db: db}
 }
 
-func (s *sorting) SortTransaction() ([]models.Transaction, error) {
+func (s *sorting) SortTransaction() error {
 
 	var (
 		transactions []models.Transaction
@@ -33,7 +33,7 @@ func (s *sorting) SortTransaction() ([]models.Transaction, error) {
 	err := db.Find(&transactions).Error
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	for _, value := range transactions {
@@ -50,7 +50,7 @@ func (s *sorting) SortTransaction() ([]models.Transaction, error) {
 			err := s.db.Model(&models.Sale{}).Create(&sale).Error
 
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 		} else {
@@ -66,12 +66,12 @@ func (s *sorting) SortTransaction() ([]models.Transaction, error) {
 			err := s.db.Model(&models.Purchase{}).Create(&purchase).Error
 
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 		}
 
 	}
 
-	return transactions, nil
+	return nil
 }
