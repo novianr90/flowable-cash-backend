@@ -40,11 +40,11 @@ func (s *sorting) SortTransaction() ([]models.Transaction, error) {
 
 		if value.Type == "Sale" {
 			sale = models.Sale{
-				Name:         value.Name,
-				Date:         value.Date,
-				Total:        value.Total,
-				Description:  value.Description,
-				TransctionID: value.ID,
+				Name:          value.Name,
+				Date:          value.Date,
+				Total:         value.Total,
+				Description:   value.Description,
+				TransactionID: value.ID,
 			}
 
 			err := s.db.Model(&models.Sale{}).Create(&sale).Error
@@ -56,11 +56,11 @@ func (s *sorting) SortTransaction() ([]models.Transaction, error) {
 		} else {
 
 			purchase = models.Purchase{
-				Name:         value.Name,
-				Date:         value.Date,
-				Total:        value.Total,
-				Description:  value.Description,
-				TransctionID: value.ID,
+				Name:          value.Name,
+				Date:          value.Date,
+				Total:         value.Total,
+				Description:   value.Description,
+				TransactionID: value.ID,
 			}
 
 			err := s.db.Model(&models.Purchase{}).Create(&purchase).Error
