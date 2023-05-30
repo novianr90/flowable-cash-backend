@@ -33,7 +33,13 @@ func Connection() *gorm.DB {
 
 	fmt.Println("connected to database")
 
-	err = db.Debug().AutoMigrate(models.Transaction{}, models.General{}, models.Ledger{})
+	err = db.Debug().AutoMigrate(
+		models.Transaction{},
+		models.General{},
+		models.Ledger{},
+		models.Sale{},
+		models.Purchase{},
+	)
 
 	if err != nil {
 		log.Fatal(err)
