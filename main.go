@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync"
 
 	"gorm.io/gorm"
 
@@ -16,7 +15,6 @@ import (
 )
 
 func main() {
-	var wg *sync.WaitGroup
 
 	db := configs.Connection()
 
@@ -26,13 +24,7 @@ func main() {
 
 	SetupInternalJob(db)
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		app.Run(":" + PORT)
-	}()
-
-	wg.Wait()
+	app.Run(":" + PORT)
 }
 
 func SetupRouter(db *gorm.DB) *gin.Engine {
