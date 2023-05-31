@@ -5,7 +5,6 @@ import (
 	deleteTransaction "flowable-cash-backend/controllers/transaction-controllers/delete"
 	readTransaction "flowable-cash-backend/controllers/transaction-controllers/read"
 	updateTransaction "flowable-cash-backend/controllers/transaction-controllers/update"
-	"flowable-cash-backend/internal/sorting"
 
 	handlerCreate "flowable-cash-backend/handlers/transaction-handlers/create"
 	handlerDelete "flowable-cash-backend/handlers/transaction-handlers/delete"
@@ -18,16 +17,13 @@ import (
 )
 
 func InitTransactionRoutes(db *gorm.DB, route *gin.Engine) {
-
-	sorting := sorting.NewSortingInternal(db)
-
 	// Create
-	createRepository := createTransaction.NewRepositoryCreate(db, sorting)
+	createRepository := createTransaction.NewRepositoryCreate(db)
 	createService := createTransaction.NewServiceCreate(createRepository)
 	createHandler := handlerCreate.NewHandlerCreateTransaction(createService)
 
 	//Delete
-	deleteRepository := deleteTransaction.NewRepositoryDelete(db, sorting)
+	deleteRepository := deleteTransaction.NewRepositoryDelete(db)
 	deleteService := deleteTransaction.NewDeleteService(deleteRepository)
 	deleteHandler := handlerDelete.NewHandlerDeleteTransaction(deleteService)
 
@@ -37,7 +33,7 @@ func InitTransactionRoutes(db *gorm.DB, route *gin.Engine) {
 	readHandler := handlerRead.NewHandlerReadTransaction(readService)
 
 	// Update
-	updateRepository := updateTransaction.NewRepositoryUpdate(db, sorting)
+	updateRepository := updateTransaction.NewRepositoryUpdate(db)
 	updateService := updateTransaction.NewUpdateService(updateRepository)
 	updateHandler := handlerUpdate.NewHandlerUpdateTransaction(updateService)
 
@@ -47,8 +43,17 @@ func InitTransactionRoutes(db *gorm.DB, route *gin.Engine) {
 
 	groupRoute.DELETE("", deleteHandler.DeleteTransaction)
 
-	groupRoute.GET("/all", readHandler.GetAllTransactions)
+	// All transactions
+	groupRoute.GET("", readHandler.GetAllTransactions)
 	groupRoute.GET("/id", readHandler.GetTransactionById)
+
+	// Sale
+	groupRoute.GET("/sales", readHandler.GetSaleTransactions)
+	groupRoute.GET("/sale", readHandler.GetSaleTransactionById)
+
+	// Purchase
+	groupRoute.GET("/purchases", readHandler.GetPurchaseTransactions)
+	groupRoute.GET("/purchase", readHandler.GetPurchaseTransactionById)
 
 	groupRoute.PUT("", updateHandler.UpdateTransaction)
 }

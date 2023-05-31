@@ -2,7 +2,6 @@ package deleteTransaction
 
 import (
 	"errors"
-	"flowable-cash-backend/internal/sorting"
 	"flowable-cash-backend/models"
 
 	"gorm.io/gorm"
@@ -13,12 +12,11 @@ type Repository interface {
 }
 
 type repository struct {
-	db      *gorm.DB
-	sorting sorting.Sorting
+	db *gorm.DB
 }
 
-func NewRepositoryDelete(db *gorm.DB, sorting sorting.Sorting) *repository {
-	return &repository{db: db, sorting: sorting}
+func NewRepositoryDelete(db *gorm.DB) *repository {
+	return &repository{db: db}
 }
 
 func (r *repository) DeleteTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
@@ -37,10 +35,6 @@ func (r *repository) DeleteTransactionRepository(input *models.Transaction) (*mo
 
 	if deleteStudentId.Error != nil {
 		return &transactionModel, deleteStudentId.Error
-	}
-
-	if err := r.sorting.SortTransaction(); err != nil {
-		return &models.Transaction{}, err
 	}
 
 	return &transactionModel, nil
