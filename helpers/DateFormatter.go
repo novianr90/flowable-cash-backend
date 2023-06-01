@@ -2,7 +2,7 @@ package helpers
 
 import "time"
 
-var dateLayout = "2006-01-02"
+var dateLayout = "2006/01/02"
 
 func StringToDate(value string) (time.Time, error) {
 
