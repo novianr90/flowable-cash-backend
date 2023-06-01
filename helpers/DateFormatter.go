@@ -2,11 +2,11 @@ package helpers
 
 import "time"
 
-var dateLayout = "2023-06-02 15:04:05"
+var dateLayout = "2023-06-02"
 
 func StringToDate(value string) (time.Time, error) {
 
-	date, err := time.Parse(dateLayout, value)
+	date, err := time.Parse(dateLayout, value+" 00:00:00")
 
 	if err != nil {
 		return time.Time{}, err
