@@ -3,16 +3,16 @@ package readTransaction
 import "flowable-cash-backend/models"
 
 type Service interface {
-	ReadAllTransactions() (*[]models.Transaction, error)
-	ReadTransactionById(input *InputReadTransaction) (*models.Transaction, error)
+	ReadAllTransactions() (ResponseTransaction, error)
+	ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error)
 
 	// Read: Tx Sale Type
-	ReadAllSaleTypeTransactions() (*[]models.Transaction, error)
-	ReadSaleTypeById(input *InputReadTransaction) (*models.Transaction, error)
+	ReadAllSaleTypeTransactions() ([]ResponseTransaction, error)
+	ReadSaleTypeById(input *InputReadTransaction) (ResponseTransaction, error)
 
 	// Read: Tx Purchase Type
-	ReadAllPurchaseTypeTransactions() (*[]models.Transaction, error)
-	ReadPurchaseTypeById(input *InputReadTransaction) (*models.Transaction, error)
+	ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, error)
+	ReadPurchaseTypeById(input *InputReadTransaction) (ResponseTransaction, error)
 }
 
 type service struct {
@@ -23,17 +23,32 @@ func NewReadService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) ReadAllTransactions() (*[]models.Transaction, error) {
+func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
 	result, err := s.repo.ReadAllTransactions()
 
-	if err != nil {
-		return &[]models.Transaction{}, err
+	var responses []ResponseTransaction
+
+	for _, value := range *result {
+		responses = append(responses, ResponseTransaction{
+			ID:          value.ID,
+			Date:        value.Date,
+			Name:        value.Name,
+			Type:        value.Type,
+			Total:       value.Total,
+			Description: value.Description,
+			CreatedAt:   value.CreatedAt,
+			UpdatedAt:   value.UpdatedAt,
+		})
 	}
 
-	return result, nil
+	if err != nil {
+		return []ResponseTransaction{}, err
+	}
+
+	return responses, nil
 }
 
-func (s *service) ReadTransactionById(input *InputReadTransaction) (*models.Transaction, error) {
+func (s *service) ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error) {
 
 	transaction := models.Transaction{
 		ID: input.ID,
@@ -41,24 +56,50 @@ func (s *service) ReadTransactionById(input *InputReadTransaction) (*models.Tran
 
 	result, err := s.repo.ReadTransactionById(&transaction)
 
-	if err != nil {
-		return &models.Transaction{}, err
+	response := ResponseTransaction{
+		ID:          result.ID,
+		Date:        result.Date,
+		Name:        result.Name,
+		Type:        result.Type,
+		Total:       result.Total,
+		Description: result.Description,
+		CreatedAt:   result.CreatedAt,
+		UpdatedAt:   result.UpdatedAt,
 	}
 
-	return result, nil
+	if err != nil {
+		return ResponseTransaction{}, err
+	}
+
+	return response, nil
 }
 
-func (s *service) ReadAllSaleTypeTransactions() (*[]models.Transaction, error) {
+func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
 	result, err := s.repo.ReadAllSaleTypeTransactions()
 
-	if err != nil {
-		return &[]models.Transaction{}, err
+	var responses []ResponseTransaction
+
+	for _, value := range *result {
+		responses = append(responses, ResponseTransaction{
+			ID:          value.ID,
+			Date:        value.Date,
+			Name:        value.Name,
+			Type:        value.Type,
+			Total:       value.Total,
+			Description: value.Description,
+			CreatedAt:   value.CreatedAt,
+			UpdatedAt:   value.UpdatedAt,
+		})
 	}
 
-	return result, nil
+	if err != nil {
+		return []ResponseTransaction{}, err
+	}
+
+	return responses, nil
 }
 
-func (s *service) ReadSaleTypeById(input *InputReadTransaction) (*models.Transaction, error) {
+func (s *service) ReadSaleTypeById(input *InputReadTransaction) (ResponseTransaction, error) {
 
 	query := models.Transaction{
 		ID: input.ID,
@@ -66,24 +107,50 @@ func (s *service) ReadSaleTypeById(input *InputReadTransaction) (*models.Transac
 
 	result, err := s.repo.ReadSaleTypeById(&query)
 
-	if err != nil {
-		return &models.Transaction{}, err
+	response := ResponseTransaction{
+		ID:          result.ID,
+		Date:        result.Date,
+		Name:        result.Name,
+		Type:        result.Type,
+		Total:       result.Total,
+		Description: result.Description,
+		CreatedAt:   result.CreatedAt,
+		UpdatedAt:   result.UpdatedAt,
 	}
 
-	return result, nil
+	if err != nil {
+		return ResponseTransaction{}, err
+	}
+
+	return response, nil
 }
 
-func (s *service) ReadAllPurchaseTypeTransactions() (*[]models.Transaction, error) {
+func (s *service) ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, error) {
 	result, err := s.repo.ReadAllPurchaseTypeTransactions()
 
-	if err != nil {
-		return &[]models.Transaction{}, err
+	var responses []ResponseTransaction
+
+	for _, value := range *result {
+		responses = append(responses, ResponseTransaction{
+			ID:          value.ID,
+			Date:        value.Date,
+			Name:        value.Name,
+			Type:        value.Type,
+			Total:       value.Total,
+			Description: value.Description,
+			CreatedAt:   value.CreatedAt,
+			UpdatedAt:   value.UpdatedAt,
+		})
 	}
 
-	return result, nil
+	if err != nil {
+		return []ResponseTransaction{}, err
+	}
+
+	return responses, nil
 }
 
-func (s *service) ReadPurchaseTypeById(input *InputReadTransaction) (*models.Transaction, error) {
+func (s *service) ReadPurchaseTypeById(input *InputReadTransaction) (ResponseTransaction, error) {
 
 	query := models.Transaction{
 		ID: input.ID,
@@ -91,9 +158,20 @@ func (s *service) ReadPurchaseTypeById(input *InputReadTransaction) (*models.Tra
 
 	result, err := s.repo.ReadPurchaseTypeById(&query)
 
-	if err != nil {
-		return &models.Transaction{}, err
+	response := ResponseTransaction{
+		ID:          result.ID,
+		Date:        result.Date,
+		Name:        result.Name,
+		Type:        result.Type,
+		Total:       result.Total,
+		Description: result.Description,
+		CreatedAt:   result.CreatedAt,
+		UpdatedAt:   result.UpdatedAt,
 	}
 
-	return result, nil
+	if err != nil {
+		return ResponseTransaction{}, err
+	}
+
+	return response, nil
 }

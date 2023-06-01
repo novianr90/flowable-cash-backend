@@ -6,7 +6,7 @@ import (
 )
 
 type Service interface {
-	UpdateTransactionService(input *InputUpdateTransaction) (*models.Transaction, error)
+	UpdateTransactionService(input *InputUpdateTransaction) (ResponseTransaction, error)
 }
 
 type service struct {
@@ -17,7 +17,7 @@ func NewUpdateService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (*models.Transaction, error) {
+func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (ResponseTransaction, error) {
 
 	formattedDate, _ := helpers.StringToDate(input.Date)
 
@@ -32,9 +32,20 @@ func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (*mode
 
 	result, err := s.repo.UpdateTransactionRepository(&transaction)
 
-	if err != nil {
-		return result, err
+	response := ResponseTransaction{
+		ID:          result.ID,
+		Date:        result.Date,
+		Name:        result.Name,
+		Type:        result.Type,
+		Total:       result.Total,
+		Description: result.Description,
+		CreatedAt:   result.CreatedAt,
+		UpdatedAt:   result.UpdatedAt,
 	}
 
-	return result, nil
+	if err != nil {
+		return ResponseTransaction{}, err
+	}
+
+	return response, nil
 }
