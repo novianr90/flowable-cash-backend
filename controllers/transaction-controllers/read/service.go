@@ -3,7 +3,7 @@ package readTransaction
 import "flowable-cash-backend/models"
 
 type Service interface {
-	ReadAllTransactions() (ResponseTransaction, error)
+	ReadAllTransactions() ([]ResponseTransaction, error)
 	ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error)
 
 	// Read: Tx Sale Type
