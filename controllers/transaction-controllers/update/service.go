@@ -32,9 +32,11 @@ func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (Respo
 
 	result, err := s.repo.UpdateTransactionRepository(&transaction)
 
+	date := helpers.DateToString(result.Date)
+
 	response := ResponseTransaction{
 		ID:          result.ID,
-		Date:        result.Date,
+		Date:        date,
 		Name:        result.Name,
 		Type:        result.Type,
 		Total:       result.Total,

@@ -13,7 +13,7 @@ type InputUpdateTransaction struct {
 
 type ResponseTransaction struct {
 	ID          uint      `json:"id"`
-	Date        time.Time `json:"date"`
+	Date        string    `json:"date"`
 	Name        string    `json:"name"`
 	Type        string    `json:"type"`
 	Total       uint      `json:"total"`

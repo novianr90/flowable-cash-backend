@@ -1,6 +1,9 @@
 package readSale
 
-import "flowable-cash-backend/models"
+import (
+	"flowable-cash-backend/helpers"
+	"flowable-cash-backend/models"
+)
 
 type Service interface {
 	ReadAllSaleTypeTransactions() ([]ResponseTransaction, error)
@@ -21,9 +24,12 @@ func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
 	var responses []ResponseTransaction
 
 	for _, value := range *result {
+
+		formattedDate := helpers.DateToString(value.Date)
+
 		responses = append(responses, ResponseTransaction{
 			ID:          value.ID,
-			Date:        value.Date,
+			Date:        formattedDate,
 			Name:        value.Name,
 			Total:       value.Total,
 			Description: value.Description,
@@ -47,9 +53,11 @@ func (s *service) ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTra
 
 	result, err := s.repo.ReadSaleTypeById(&query)
 
+	formattedDate := helpers.DateToString(result.Date)
+
 	response := ResponseTransaction{
 		ID:          result.ID,
-		Date:        result.Date,
+		Date:        formattedDate,
 		Name:        result.Name,
 		Total:       result.Total,
 		Description: result.Description,

@@ -31,9 +31,11 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 
 	result, err := s.repo.CreateTransactionRepository(&transaction)
 
+	date := helpers.DateToString(result.Date)
+
 	response := ResponseTransaction{
 		ID:          result.ID,
-		Date:        result.Date,
+		Date:        date,
 		Name:        result.Name,
 		Type:        result.Type,
 		Total:       result.Total,

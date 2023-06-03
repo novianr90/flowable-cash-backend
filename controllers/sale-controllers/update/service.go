@@ -30,10 +30,12 @@ func (s *service) UpdateSaleTransaction(input *InputUpdateSale) (ResponseTransac
 
 	res, err := s.repo.UpdateSaleTransaction(&saleTransaction)
 
+	date := helpers.DateToString(res.Date)
+
 	response := ResponseTransaction{
 		ID:          res.ID,
 		Name:        res.Name,
-		Date:        res.Date,
+		Date:        date,
 		Total:       res.Total,
 		Description: res.Description,
 		CreatedAt:   res.CreatedAt,

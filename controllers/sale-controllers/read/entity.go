@@ -8,7 +8,7 @@ type InputReadSaleTransaction struct {
 
 type ResponseTransaction struct {
 	ID          uint      `json:"id"`
-	Date        time.Time `json:"date"`
+	Date        string    `json:"date"`
 	Name        string    `json:"name"`
 	Total       uint      `json:"total"`
 	Description string    `json:"description"`

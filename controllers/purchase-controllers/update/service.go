@@ -30,8 +30,11 @@ func (s *service) UpdatePurchaseTransactionById(input *InputUpdatePurchase) (Res
 
 	res, err := s.repo.UpdatePurchaseTransaction(&update)
 
+	date := helpers.DateToString(res.Date)
+
 	response := ResponseTransaction{
 		ID:          res.ID,
+		Date:        date,
 		Name:        res.Name,
 		Total:       res.Total,
 		Description: res.Description,
