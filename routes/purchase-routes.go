@@ -22,10 +22,10 @@ func InitPurchaseRoutes(db *gorm.DB, routes *gin.RouterGroup) {
 	updateService := updatePurchase.NewServiceUpdatePurchase(updateRepo)
 	updateHandler := handlerUpdatePurchase.NewUpdatePurchaseHandler(updateService)
 
-	groupRoute := routes.Group("/purchase")
+	groupRoute := routes.Group("/purchases")
 
 	groupRoute.GET("", readHandler.GetPurchaseTransactions)
-	groupRoute.GET("", readHandler.GetPurchaseTransactionById)
+	groupRoute.GET("/", readHandler.GetPurchaseTransactionById)
 
 	groupRoute.PUT("", updateHandler.UpdatePurchaseTransactionById)
 }

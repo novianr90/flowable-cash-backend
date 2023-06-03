@@ -22,11 +22,11 @@ func InitSaleTransactionRoutes(db *gorm.DB, route *gin.RouterGroup) {
 	updateService := updateSale.NewUpdateSaleTransactionService(updateRepository)
 	updateHandler := handlerUpdateTransaction.NewUpdateSaleTransactionHandler(updateService)
 
-	groupRoute := route.Group("/sale")
+	groupRoute := route.Group("/sales")
 
 	// Read
 	groupRoute.GET("", readHandler.GetAllSaleTransactions)
-	groupRoute.GET("", readHandler.GetSaleTransactionById)
+	groupRoute.GET("/", readHandler.GetSaleTransactionById)
 
 	// Update
 	groupRoute.PUT("", updateHandler.UpdateSaleTransactionById)
