@@ -42,5 +42,13 @@ func (r *repository) UpdateSaleTransaction(input *models.Transaction) (*models.T
 		return &models.Transaction{}, errors.New("no record found")
 	}
 
-	return &transaction, nil
+	var getSale models.Transaction
+
+	err := db.Where("id = ?", input.ID).First(&getSale).Error
+
+	if err != nil {
+		return &models.Transaction{}, err
+	}
+
+	return &getSale, nil
 }
