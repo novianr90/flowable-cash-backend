@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitTransactionRoutes(db *gorm.DB, route *gin.Engine) {
+func InitTransactionRoutes(db *gorm.DB, route *gin.RouterGroup) {
 	// Create
 	createRepository := createTransaction.NewRepositoryCreate(db)
 	createService := createTransaction.NewServiceCreate(createRepository)
@@ -37,7 +37,7 @@ func InitTransactionRoutes(db *gorm.DB, route *gin.Engine) {
 	updateService := updateTransaction.NewUpdateService(updateRepository)
 	updateHandler := handlerUpdate.NewHandlerUpdateTransaction(updateService)
 
-	groupRoute := route.Group("/api/transactions")
+	groupRoute := route.Group("/transactions")
 
 	groupRoute.POST("", createHandler.CreateTransaction)
 
@@ -45,15 +45,7 @@ func InitTransactionRoutes(db *gorm.DB, route *gin.Engine) {
 
 	// All transactions
 	groupRoute.GET("", readHandler.GetAllTransactions)
-	groupRoute.GET("/id", readHandler.GetTransactionById)
-
-	// Sale
-	groupRoute.GET("/sales", readHandler.GetSaleTransactions)
-	groupRoute.GET("/sale", readHandler.GetSaleTransactionById)
-
-	// Purchase
-	groupRoute.GET("/purchases", readHandler.GetPurchaseTransactions)
-	groupRoute.GET("/purchase", readHandler.GetPurchaseTransactionById)
+	groupRoute.GET("", readHandler.GetTransactionById)
 
 	groupRoute.PUT("", updateHandler.UpdateTransaction)
 }

@@ -29,7 +29,11 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
 
-	routes.InitTransactionRoutes(db, router)
+	apiRouter := router.Group("/api")
+
+	routes.InitTransactionRoutes(db, apiRouter)
+	routes.InitSaleTransactionRoutes(db, apiRouter)
+	routes.InitPurchaseRoutes(db, apiRouter)
 
 	return router
 }

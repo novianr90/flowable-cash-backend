@@ -1,22 +1,23 @@
-package readTransaction
+package readPurchase
 
 import "flowable-cash-backend/models"
 
 type Service interface {
-	ReadAllTransactions() ([]ResponseTransaction, error)
-	ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error)
+	// Read: Tx Purchase Type
+	ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, error)
+	ReadPurchaseTypeById(input *InputReadPurchaseTransaction) (ResponseTransaction, error)
 }
 
 type service struct {
-	repo Repository
+	repository Repository
 }
 
-func NewReadService(repo Repository) *service {
-	return &service{repo: repo}
+func NewReadPurchaseService(repository Repository) *service {
+	return &service{repository: repository}
 }
 
-func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
-	result, err := s.repo.ReadAllTransactions()
+func (s *service) ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, error) {
+	result, err := s.repository.ReadAllPurchaseTypeTransactions()
 
 	var responses []ResponseTransaction
 
@@ -25,7 +26,6 @@ func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
 			ID:          value.ID,
 			Date:        value.Date,
 			Name:        value.Name,
-			Type:        value.Type,
 			Total:       value.Total,
 			Description: value.Description,
 			CreatedAt:   value.CreatedAt,
@@ -40,19 +40,18 @@ func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
 	return responses, nil
 }
 
-func (s *service) ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error) {
+func (s *service) ReadPurchaseTypeById(input *InputReadPurchaseTransaction) (ResponseTransaction, error) {
 
-	transaction := models.Transaction{
+	query := models.Transaction{
 		ID: input.ID,
 	}
 
-	result, err := s.repo.ReadTransactionById(&transaction)
+	result, err := s.repository.ReadPurchaseTypeById(&query)
 
 	response := ResponseTransaction{
 		ID:          result.ID,
 		Date:        result.Date,
 		Name:        result.Name,
-		Type:        result.Type,
 		Total:       result.Total,
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,

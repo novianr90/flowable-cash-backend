@@ -31,7 +31,7 @@ func (h *handler) UpdateTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "transaction sucessfully updated",
+		"message":     "Transaction sucessfully updated",
 		"transaction": result,
 	})
 }

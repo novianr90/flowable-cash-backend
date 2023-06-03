@@ -1,22 +1,22 @@
-package readTransaction
+package readSale
 
 import "flowable-cash-backend/models"
 
 type Service interface {
-	ReadAllTransactions() ([]ResponseTransaction, error)
-	ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error)
+	ReadAllSaleTypeTransactions() ([]ResponseTransaction, error)
+	ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTransaction, error)
 }
 
 type service struct {
 	repo Repository
 }
 
-func NewReadService(repo Repository) *service {
+func NewReadSaleService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
-	result, err := s.repo.ReadAllTransactions()
+func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
+	result, err := s.repo.ReadAllSaleTypeTransactions()
 
 	var responses []ResponseTransaction
 
@@ -25,7 +25,6 @@ func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
 			ID:          value.ID,
 			Date:        value.Date,
 			Name:        value.Name,
-			Type:        value.Type,
 			Total:       value.Total,
 			Description: value.Description,
 			CreatedAt:   value.CreatedAt,
@@ -40,19 +39,18 @@ func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
 	return responses, nil
 }
 
-func (s *service) ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error) {
+func (s *service) ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTransaction, error) {
 
-	transaction := models.Transaction{
+	query := models.Transaction{
 		ID: input.ID,
 	}
 
-	result, err := s.repo.ReadTransactionById(&transaction)
+	result, err := s.repo.ReadSaleTypeById(&query)
 
 	response := ResponseTransaction{
 		ID:          result.ID,
 		Date:        result.Date,
 		Name:        result.Name,
-		Type:        result.Type,
 		Total:       result.Total,
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,

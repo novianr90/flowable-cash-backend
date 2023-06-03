@@ -31,7 +31,7 @@ func (h *handler) DeleteTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "transaction sucessfully deleted",
+		"message":     "Transaction sucessfully deleted",
 		"transaction": result,
 	})
 }
