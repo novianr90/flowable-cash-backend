@@ -24,7 +24,7 @@ func (h *handler) GetAllTransactions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"transactions": result,
+		"transaction": result,
 	})
 }
 
