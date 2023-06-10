@@ -22,7 +22,7 @@ const (
 	// Pendapatan (Laba)
 	Penjualan = "4-1000"
 
-	// HPP
+	// Harga Pokok Penjualan
 	Pembelian = "5-1000"
 
 	// Beban
