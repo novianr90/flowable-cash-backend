@@ -19,7 +19,7 @@ const (
 	LabaDitahan = "3-2000"
 	Prive       = "3-3000"
 
-	// Pendapatan
+	// Pendapatan (Laba)
 	Penjualan = "4-1000"
 
 	// HPP
