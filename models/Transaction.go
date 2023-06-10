@@ -8,6 +8,8 @@ type Transaction struct {
 	Name        string    `gorm:"not null"`
 	Type        string
 	Total       uint `gorm:"not null"`
+	FeeType     string
+	Fee         uint
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time

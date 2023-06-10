@@ -9,6 +9,8 @@ type InputUpdateTransaction struct {
 	Type        string `form:"transaction_type"`
 	Total       uint   `form:"transaction_total"`
 	Description string `form:"description"`
+	FeeType     string `json:"fee_type"`
+	Fee         uint   `json:"transaction_fee"`
 }
 
 type ResponseTransaction struct {
@@ -17,6 +19,8 @@ type ResponseTransaction struct {
 	Name        string    `json:"name"`
 	Type        string    `json:"type"`
 	Total       uint      `json:"total"`
+	FeeType     string    `json:"fee_type"`
+	Fee         uint      `json:"transaction_fee"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`

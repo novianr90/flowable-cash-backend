@@ -40,6 +40,8 @@ func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (Respo
 		Name:        result.Name,
 		Type:        result.Type,
 		Total:       result.Total,
+		FeeType:     result.FeeType,
+		Fee:         result.Fee,
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,
 		UpdatedAt:   result.UpdatedAt,

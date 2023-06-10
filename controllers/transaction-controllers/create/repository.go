@@ -26,6 +26,8 @@ func (r *repository) CreateTransactionRepository(input *models.Transaction) (*mo
 		Type:        input.Type,
 		Total:       input.Total,
 		Description: input.Description,
+		FeeType:     input.FeeType,
+		Fee:         input.Fee,
 	}
 
 	if err := r.db.Create(&transaction).Error; err != nil {
