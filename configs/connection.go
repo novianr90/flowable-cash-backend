@@ -37,6 +37,7 @@ func Connection() *gorm.DB {
 		models.Transaction{},
 		models.General{},
 		models.Ledger{},
+		models.BalanceSheet{},
 	)
 
 	if err != nil {
