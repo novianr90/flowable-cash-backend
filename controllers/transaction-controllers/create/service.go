@@ -27,6 +27,8 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 		Type:        input.Type,
 		Total:       input.Total,
 		Description: input.Description,
+		FeeType:     input.FeeType,
+		Fee:         input.Fee,
 	}
 
 	result, err := s.repo.CreateTransactionRepository(&transaction)
@@ -39,6 +41,8 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 		Name:        result.Name,
 		Type:        result.Type,
 		Total:       result.Total,
+		FeeType:     result.FeeType,
+		Fee:         result.Fee,
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,
 		UpdatedAt:   result.UpdatedAt,
