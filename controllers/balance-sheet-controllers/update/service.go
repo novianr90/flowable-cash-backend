@@ -1,6 +1,7 @@
 package updateBalanceSheet
 
 import (
+	"encoding/json"
 	"flowable-cash-backend/helpers"
 	"flowable-cash-backend/models"
 )
@@ -19,11 +20,19 @@ func NewUpdateBalanceSheetService(repo Repository) *service {
 
 func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error) {
 
+	balanceFormatted := helpers.DebitCreditDecider(input.AccountName, input.Balance)
+
+	balance, err := json.Marshal(balanceFormatted)
+
+	if err != nil {
+		return ResponseBalanceSheet{}, err
+	}
+
 	query := models.BalanceSheet{
 		ID:          input.ID,
 		AccountNo:   helpers.AccountNoDecider(input.AccountName),
 		AccountName: input.AccountName,
-		Balance:     helpers.DebitCreditDecider(input.AccountName, input.Balance),
+		Balance:     balance,
 	}
 
 	res, err := s.repo.UpdateBalanceSheet(&query)
@@ -32,11 +41,15 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 		return ResponseBalanceSheet{}, err
 	}
 
+	var balanceRes models.Balance
+
+	_ = json.Unmarshal(res.Balance, &balanceRes)
+
 	response := ResponseBalanceSheet{
 		ID:          res.ID,
 		AccountName: res.AccountName,
 		AccountNo:   res.AccountNo,
-		Balance:     res.Balance,
+		Balance:     balanceRes,
 	}
 
 	return response, nil

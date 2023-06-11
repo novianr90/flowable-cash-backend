@@ -1,5 +1,10 @@
 package readBalanceSheet
 
+import (
+	"encoding/json"
+	"flowable-cash-backend/models"
+)
+
 type Service interface {
 	GetBalanceSheet() (*[]ResponseBalanceSheet, error)
 }
@@ -16,6 +21,8 @@ func (s *service) GetBalanceSheet() (*[]ResponseBalanceSheet, error) {
 
 	var response []ResponseBalanceSheet
 
+	var balance models.Balance
+
 	res, err := s.repo.GetBalanceSheet()
 
 	if err != nil {
@@ -23,11 +30,14 @@ func (s *service) GetBalanceSheet() (*[]ResponseBalanceSheet, error) {
 	}
 
 	for _, value := range *res {
+
+		_ = json.Unmarshal(value.Balance, &balance)
+
 		response = append(response, ResponseBalanceSheet{
 			ID:          value.ID,
 			AccountNo:   value.AccountNo,
 			AccountName: value.AccountName,
-			Balance:     value.Balance,
+			Balance:     balance,
 			CreatedAt:   value.CreatedAt,
 			UpdatedAt:   value.UpdatedAt,
 		})
