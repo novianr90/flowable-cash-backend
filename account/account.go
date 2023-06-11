@@ -26,7 +26,6 @@ const (
 	Pembelian = "5-1000"
 
 	// Beban
-	BebanPembelian   = "6-1000"
-	BebanPenjualan   = "6-2000"
-	BebanOperasional = "6-3000"
+	BebanPembelian = "6-1000"
+	BebanPenjualan = "6-2000"
 )

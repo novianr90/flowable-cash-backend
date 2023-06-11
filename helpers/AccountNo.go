@@ -37,9 +37,6 @@ func AccountNoDecider(value string) string {
 
 	case "Beban Penjualan":
 		return account.BebanPenjualan
-
-	case "Beban Operasional":
-		return account.BebanOperasional
 	}
 
 	return ""
