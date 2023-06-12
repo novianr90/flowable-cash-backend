@@ -23,12 +23,10 @@ func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 	model := r.db.Model(&models.BalanceSheet{})
 
 	query := models.BalanceSheet{
-		AccountNo:   input.AccountNo,
-		AccountName: input.AccountName,
-		Balance:     input.Balance,
+		Balance: input.Balance,
 	}
 
-	res := model.Where("id = ?", input.ID).Updates(&query)
+	res := model.Where("account_name = ?", input.AccountName).Updates(&query)
 
 	if res.RowsAffected == 0 {
 		return &models.BalanceSheet{}, errors.New("no record to update")
