@@ -7,9 +7,9 @@ const (
 	PersediaanBarangDagang = "1-1200"
 
 	// Aset Tetap
-	AsetTetap                 = "1-2000"
-	Device                    = "1-2100"
-	AkumulasiPenyusutanDevice = "1-2101"
+	AsetTetap                       = "1-2000"
+	Perlengkapan                    = "1-2100"
+	AkumulasiPenyusutanPerlengkapan = "1-2101"
 
 	//Liabilitas (Kewajiban)
 	HutangDagang = "2-1000"

@@ -36,5 +36,9 @@ func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		return &models.BalanceSheet{}, res.Error
 	}
 
-	return &query, nil
+	var response models.BalanceSheet
+
+	_ = model.Where("account_name = ?", input.AccountName).First(&response)
+
+	return &response, nil
 }
