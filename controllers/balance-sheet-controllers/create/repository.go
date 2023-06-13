@@ -36,7 +36,7 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 	err := model.Where("account_name = ?", input.AccountName).First(&check).Error
 
 	if err != nil {
-		if err.Error() == gorm.ErrRecordNotFound.Error() {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			createFlag = true
 		}
 	}
