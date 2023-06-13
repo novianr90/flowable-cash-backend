@@ -33,7 +33,7 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		Balance:     input.Balance,
 	}
 
-	err := model.Where("account_name = ?", input.AccountName).First(&check).Error
+	err := model.Where("account_name = ?", input.AccountName).Find(&check).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
