@@ -14,6 +14,9 @@ func AccountNoDecider(value string) string {
 	case "Perlengkapan":
 		return account.Perlengkapan
 
+	case "Akumulasi Penyusutan Perlengkapan":
+		return account.AkumulasiPenyusutanPerlengkapan
+
 	case "Hutang Dagang":
 		return account.HutangDagang
 
