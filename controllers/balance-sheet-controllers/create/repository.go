@@ -21,6 +21,8 @@ func NewCreateBalanceSheetRepository(db *gorm.DB) *repository {
 
 func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, error) {
 
+	var createFlag bool = false
+
 	var check models.BalanceSheet
 
 	model := r.db.Model(&models.BalanceSheet{})
@@ -31,12 +33,24 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		Balance:     input.Balance,
 	}
 
-	if isExist := model.Where("account_name = ?", input.AccountName).First(&check).RowsAffected; isExist > 0 {
-		return &models.BalanceSheet{}, errors.New("data already created")
+	isExist := model.Where("account_name = ?", input.AccountName).First(&check)
+
+	if isExist.Error == gorm.ErrRecordNotFound {
+		createFlag = true
 	}
 
-	if err := model.Create(&balanceSheet).Error; err != nil {
-		return &models.BalanceSheet{}, err
+	if isExist.RowsAffected > 0 {
+		createFlag = true
+	}
+
+	if createFlag {
+		if err := model.Create(&balanceSheet).Error; err != nil {
+			return &models.BalanceSheet{}, err
+		}
+	}
+
+	if !createFlag {
+		return &models.BalanceSheet{}, errors.New("data already created")
 	}
 
 	return &balanceSheet, nil
