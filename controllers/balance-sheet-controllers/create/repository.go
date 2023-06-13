@@ -1,7 +1,6 @@
 package createBalanceSheet
 
 import (
-	"errors"
 	"flowable-cash-backend/models"
 
 	"gorm.io/gorm"
@@ -21,10 +20,6 @@ func NewCreateBalanceSheetRepository(db *gorm.DB) *repository {
 
 func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, error) {
 
-	var createFlag bool = false
-
-	var check models.BalanceSheet
-
 	model := r.db.Model(&models.BalanceSheet{})
 
 	balanceSheet := models.BalanceSheet{
@@ -33,25 +28,8 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		Balance:     input.Balance,
 	}
 
-	err := model.Where("account_name = ?", input.AccountName).Find(&check).Error
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			createFlag = true
-		}
-		println(err.Error())
-		println(gorm.ErrRecordNotFound.Error())
-		println(err == gorm.ErrRecordNotFound)
-	}
-
-	if createFlag {
-		if err := model.Create(&balanceSheet).Error; err != nil {
-			return &models.BalanceSheet{}, err
-		}
-	}
-
-	if !createFlag {
-		return &models.BalanceSheet{}, errors.New("data already created")
+	if err := model.Create(&balanceSheet).Error; err != nil {
+		return &models.BalanceSheet{}, err
 	}
 
 	return &balanceSheet, nil
