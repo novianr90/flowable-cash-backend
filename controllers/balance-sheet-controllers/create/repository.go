@@ -39,6 +39,9 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			createFlag = true
 		}
+		println(err.Error())
+		println(gorm.ErrRecordNotFound.Error())
+		println(err == gorm.ErrRecordNotFound)
 	}
 
 	if createFlag {
