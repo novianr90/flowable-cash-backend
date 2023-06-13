@@ -21,9 +21,9 @@ func NewCreateBalanceSheetRepository(db *gorm.DB) *repository {
 
 func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, error) {
 
-	model := r.db.Model(&models.BalanceSheet{})
+	var found bool
 
-	var check models.BalanceSheet
+	model := r.db.Model(&models.BalanceSheet{})
 
 	balanceSheet := models.BalanceSheet{
 		AccountNo:   input.AccountNo,
@@ -31,8 +31,9 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		Balance:     input.Balance,
 	}
 
-	if recordNotFound := model.Where("account_name = ?", input.AccountName).First(&check).Error; recordNotFound == gorm.ErrRecordNotFound {
-	} else {
+	_ = model.Raw("SELECT EXIST(SELECT 1 FROM balance_sheets WHERE account_name = ? AS found)", input.AccountName).Scan(&found)
+
+	if found {
 		return &models.BalanceSheet{}, errors.New("data already created")
 	}
 
