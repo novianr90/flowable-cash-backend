@@ -31,7 +31,7 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		Balance:     input.Balance,
 	}
 
-	if err := model.Raw("SELECT EXIST(SELECT 1 FROM balance_sheets WHERE account_name = ?)", input.AccountName).
+	if err := model.Raw("SELECT EXIST(SELECT 1 FROM balance_sheets WHERE 'account_name' = ?)", input.AccountName).
 		Scan(&found).Error; err != nil {
 		return &models.BalanceSheet{}, err
 	}
