@@ -35,7 +35,7 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 		return &models.BalanceSheet{}, errors.New("data already created")
 	}
 
-	if err := model.FirstOrCreate(&balanceSheet).Error; err != nil {
+	if err := model.Create(&balanceSheet).Error; err != nil {
 		return &models.BalanceSheet{}, err
 	}
 
