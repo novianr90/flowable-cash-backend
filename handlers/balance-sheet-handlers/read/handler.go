@@ -27,3 +27,23 @@ func (h *handler) GetBalanceSheet(ctx *gin.Context) {
 		"balance_sheet": result,
 	})
 }
+
+func (h *handler) GetBalanceSheetByAccountName(ctx *gin.Context) {
+	var input readBalanceSheet.InputReadBalanceSheet
+
+	if err := ctx.ShouldBindQuery(&input); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	result, err := h.service.GetBalanceSheetByAccountName(&input)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"balance_sheet": result,
+	})
+}

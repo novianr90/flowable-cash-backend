@@ -34,6 +34,7 @@ func InitBalanceSheetRoutes(db *gorm.DB, routes *gin.RouterGroup) {
 	groupRouter.POST("", createHandler.CreateBalanceSheet)
 
 	groupRouter.GET("", readHandler.GetBalanceSheet)
+	groupRouter.GET("/", readHandler.GetBalanceSheetByAccountName)
 
 	groupRouter.PUT("", updateHandler.UpdateBalanceSheet)
 }

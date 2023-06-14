@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+type InputReadBalanceSheet struct {
+	AccountName string `form:"account_name"`
+}
+
 type ResponseBalanceSheet struct {
 	ID          uint           `json:"balance_sheet_id"`
 	AccountNo   string         `json:"account_no"`

@@ -7,6 +7,7 @@ import (
 
 type Service interface {
 	GetBalanceSheet() (*[]ResponseBalanceSheet, error)
+	GetBalanceSheetByAccountName(input *InputReadBalanceSheet) (*ResponseBalanceSheet, error)
 }
 
 type service struct {
@@ -45,4 +46,32 @@ func (s *service) GetBalanceSheet() (*[]ResponseBalanceSheet, error) {
 
 	return &response, nil
 
+}
+
+func (s *service) GetBalanceSheetByAccountName(input *InputReadBalanceSheet) (*ResponseBalanceSheet, error) {
+
+	query := models.BalanceSheet{
+		AccountName: input.AccountName,
+	}
+
+	res, err := s.repo.GetBalanceSheetByAccountName(&query)
+
+	if err != nil {
+		return &ResponseBalanceSheet{}, err
+	}
+
+	var balance models.Balance
+
+	_ = json.Unmarshal(res.Balance, &balance)
+
+	response := ResponseBalanceSheet{
+		ID:          res.ID,
+		AccountNo:   res.AccountNo,
+		AccountName: res.AccountName,
+		Balance:     balance,
+		CreatedAt:   res.CreatedAt,
+		UpdatedAt:   res.UpdatedAt,
+	}
+
+	return &response, nil
 }
