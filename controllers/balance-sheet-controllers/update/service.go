@@ -20,11 +20,13 @@ func NewUpdateBalanceSheetService(repo Repository) *service {
 
 func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error) {
 
+	balance, _ := json.Marshal(input.Balance)
+
 	query := models.BalanceSheet{
 		ID:          input.ID,
 		AccountNo:   helpers.AccountNoDecider(input.AccountName),
 		AccountName: input.AccountName,
-		Balance:     []byte(input.Balance),
+		Balance:     balance,
 	}
 
 	res, err := s.repo.UpdateBalanceSheet(&query)
