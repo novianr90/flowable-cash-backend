@@ -20,7 +20,11 @@ func NewUpdateBalanceSheetService(repo Repository) *service {
 
 func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error) {
 
-	balance, _ := json.Marshal(input.Balance)
+	var balanceFormatted models.Balance
+
+	_ = json.Unmarshal([]byte(input.Balance), &balanceFormatted)
+
+	balance, _ := json.Marshal(balanceFormatted)
 
 	query := models.BalanceSheet{
 		ID:          input.ID,
