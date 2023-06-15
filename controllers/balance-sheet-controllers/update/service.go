@@ -24,7 +24,13 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 
 	_ = json.Unmarshal([]byte(input.Balance), &balanceFormatted)
 
+	println("unmarshal")
+	println(balanceFormatted)
+
 	balance, _ := json.Marshal(balanceFormatted)
+
+	println("marshal")
+	println(balance)
 
 	query := models.BalanceSheet{
 		ID:          input.ID,
