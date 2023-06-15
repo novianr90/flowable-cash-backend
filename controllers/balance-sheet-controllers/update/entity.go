@@ -8,7 +8,7 @@ import (
 type InputUpdateBalanceSheet struct {
 	ID          uint   `form:"balance_sheet_id"`
 	AccountName string `form:"account_name"`
-	Balance     uint   `form:"account_balance"`
+	Balance     string `form:"account_balance"`
 }
 
 type ResponseBalanceSheet struct {
