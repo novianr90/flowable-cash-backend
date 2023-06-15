@@ -18,7 +18,7 @@ func NewUpdateBalanceSheetHandler(service updateBalanceSheet.Service) *handler {
 func (h *handler) UpdateBalanceSheet(ctx *gin.Context) {
 	var input updateBalanceSheet.InputUpdateBalanceSheet
 
-	if err := ctx.ShouldBindQuery(&input); err != nil {
+	if err := ctx.ShouldBind(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
