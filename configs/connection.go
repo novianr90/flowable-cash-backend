@@ -35,8 +35,7 @@ func Connection() *gorm.DB {
 
 	err = db.Debug().AutoMigrate(
 		models.Transaction{},
-		models.General{},
-		models.Ledger{},
+		models.BalanceSheet{},
 	)
 
 	if err != nil {

@@ -29,6 +29,8 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 		Date:        input.Date,
 		Type:        input.Type,
 		Total:       input.Total,
+		FeeType:     input.FeeType,
+		Fee:         input.Fee,
 		Description: input.Description,
 	}
 
