@@ -24,6 +24,8 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 
 	_ = json.Unmarshal([]byte(input.Balance), &balanceFormatted)
 
+	println("not yet unmarshal")
+	println(input.Balance)
 	println("unmarshal")
 	println(balanceFormatted)
 
