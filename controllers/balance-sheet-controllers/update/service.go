@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flowable-cash-backend/helpers"
 	"flowable-cash-backend/models"
+	"fmt"
 )
 
 type Service interface {
@@ -26,8 +27,8 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 
 	println("not yet unmarshal")
 	println(input.Balance)
-	println("unmarshal")
-	println(balanceFormatted)
+
+	fmt.Printf("Detail Balance Formatted UnMarshal: %+v\n", balanceFormatted)
 
 	balance, _ := json.Marshal(balanceFormatted)
 
