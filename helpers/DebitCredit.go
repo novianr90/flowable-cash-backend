@@ -17,10 +17,16 @@ func DebitCreditDecider(accountName string, total uint) models.Balance {
 			Credit: 0,
 		}
 
-	case "Device":
+	case "Perlengkapan":
 		return models.Balance{
 			Debit:  float64(total),
 			Credit: 0,
+		}
+
+	case "Akumulasi Penyusutan Perlengkapan":
+		return models.Balance{
+			Debit:  0,
+			Credit: float64(total),
 		}
 
 	case "Hutang Dagang":
@@ -47,7 +53,13 @@ func DebitCreditDecider(accountName string, total uint) models.Balance {
 			Credit: float64(total),
 		}
 
-	case "Beban":
+	case "Beban Penjualan":
+		return models.Balance{
+			Debit:  float64(total),
+			Credit: 0,
+		}
+
+	case "Beban Pembelian":
 		return models.Balance{
 			Debit:  float64(total),
 			Credit: 0,
