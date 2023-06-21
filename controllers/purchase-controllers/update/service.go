@@ -26,6 +26,8 @@ func (s *service) UpdatePurchaseTransactionById(input *InputUpdatePurchase) (Res
 		Date:        formattedDate,
 		Total:       input.Total,
 		Description: input.Description,
+		FeeType:     input.FeeType,
+		Fee:         input.Fee,
 	}
 
 	res, err := s.repo.UpdatePurchaseTransaction(&update)
@@ -40,6 +42,8 @@ func (s *service) UpdatePurchaseTransactionById(input *InputUpdatePurchase) (Res
 		Description: res.Description,
 		CreatedAt:   res.CreatedAt,
 		UpdatedAt:   res.UpdatedAt,
+		FeeType:     res.FeeType,
+		Fee:         res.Fee,
 	}
 
 	if err != nil {

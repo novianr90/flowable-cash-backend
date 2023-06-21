@@ -64,6 +64,8 @@ func (s *service) ReadPurchaseTypeById(input *InputReadPurchaseTransaction) (Res
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,
 		UpdatedAt:   result.UpdatedAt,
+		Fee:         result.Fee,
+		FeeType:     result.FeeType,
 	}
 
 	if err != nil {
