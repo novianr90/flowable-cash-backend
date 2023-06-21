@@ -36,6 +36,8 @@ func (s *service) ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, erro
 			Description: value.Description,
 			CreatedAt:   value.CreatedAt,
 			UpdatedAt:   value.UpdatedAt,
+			FeeType:     value.FeeType,
+			Fee:         value.Fee,
 		})
 	}
 

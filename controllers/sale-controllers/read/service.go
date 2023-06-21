@@ -35,6 +35,8 @@ func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
 			Description: value.Description,
 			CreatedAt:   value.CreatedAt,
 			UpdatedAt:   value.UpdatedAt,
+			FeeType:     value.FeeType,
+			Fee:         value.Fee,
 		})
 	}
 
