@@ -44,6 +44,7 @@ func (s *service) UpdatePurchaseTransactionById(input *InputUpdatePurchase) (Res
 		UpdatedAt:   res.UpdatedAt,
 		FeeType:     res.FeeType,
 		Fee:         res.Fee,
+		Type:        res.Type,
 	}
 
 	if err != nil {

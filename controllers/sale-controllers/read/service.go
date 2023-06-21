@@ -37,6 +37,7 @@ func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
 			UpdatedAt:   value.UpdatedAt,
 			FeeType:     value.FeeType,
 			Fee:         value.Fee,
+			Type:        value.Type,
 		})
 	}
 
@@ -67,6 +68,7 @@ func (s *service) ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTra
 		UpdatedAt:   result.UpdatedAt,
 		Fee:         result.Fee,
 		FeeType:     result.FeeType,
+		Type:        result.Type,
 	}
 
 	if err != nil {

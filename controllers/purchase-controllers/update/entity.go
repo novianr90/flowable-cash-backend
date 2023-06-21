@@ -18,6 +18,7 @@ type ResponseTransaction struct {
 	Name        string    `json:"name"`
 	Total       uint      `json:"total"`
 	FeeType     string    `json:"fee_type"`
+	Type        string    `json:"type"`
 	Fee         uint      `json:"transaction_fee"`
 	Description string    `json:"description"`
 	CreatedAt   time.Time `json:"created_at"`

@@ -44,6 +44,7 @@ func (s *service) UpdateSaleTransaction(input *InputUpdateSale) (ResponseTransac
 		UpdatedAt:   res.UpdatedAt,
 		FeeType:     res.FeeType,
 		Fee:         res.Fee,
+		Type:        res.Type,
 	}
 
 	if err != nil {
