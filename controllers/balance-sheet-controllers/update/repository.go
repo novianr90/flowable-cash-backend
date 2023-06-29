@@ -1,6 +1,7 @@
 package updateBalanceSheet
 
 import (
+	"encoding/json"
 	"errors"
 	"flowable-cash-backend/models"
 
@@ -22,8 +23,27 @@ func NewUpdateBalanceSheetRepository(db *gorm.DB) *repository {
 func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, error) {
 	model := r.db.Model(&models.BalanceSheet{})
 
+	var response models.BalanceSheet
+
+	var inputBalance models.Balance
+
+	var localBalance models.Balance
+
+	_ = json.Unmarshal(input.Balance, &inputBalance)
+
+	_ = model.Where("account_name = ?", input.AccountName).First(&response)
+
+	_ = json.Unmarshal(response.Balance, &localBalance)
+
+	newBalance := models.Balance{
+		Debit:  inputBalance.Debit + localBalance.Debit,
+		Credit: inputBalance.Credit + localBalance.Credit,
+	}
+
+	formattedBalance, _ := json.Marshal(&newBalance)
+
 	query := models.BalanceSheet{
-		Balance: input.Balance,
+		Balance: formattedBalance,
 	}
 
 	res := model.Where("account_name = ?", input.AccountName).Updates(&query)
@@ -35,8 +55,6 @@ func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 	if res.Error != nil {
 		return &models.BalanceSheet{}, res.Error
 	}
-
-	var response models.BalanceSheet
 
 	_ = model.Where("account_name = ?", input.AccountName).First(&response)
 
