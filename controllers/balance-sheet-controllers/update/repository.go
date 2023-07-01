@@ -62,9 +62,9 @@ func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 
 	_ = json.Unmarshal(response.Balance, &balanceResponse)
 
-	if !(newBalance.Debit == balanceResponse.Debit) && !(newBalance.Credit == balanceResponse.Credit) {
-		return &response, 1, nil
+	if (newBalance.Debit == balanceResponse.Debit) && (newBalance.Credit == balanceResponse.Credit) {
+		return &response, 0, nil
 	}
 
-	return &response, 0, nil
+	return &response, 1, nil
 }
