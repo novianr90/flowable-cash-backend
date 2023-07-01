@@ -9,7 +9,7 @@ import (
 )
 
 type Repository interface {
-	UpdateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, error)
+	UpdateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, uint, error)
 }
 
 type repository struct {
@@ -20,7 +20,7 @@ func NewUpdateBalanceSheetRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, error) {
+func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.BalanceSheet, uint, error) {
 	model := r.db.Model(&models.BalanceSheet{})
 
 	var response models.BalanceSheet
@@ -49,14 +49,22 @@ func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 	res := model.Where("account_name = ?", input.AccountName).Updates(&query)
 
 	if res.RowsAffected == 0 {
-		return &models.BalanceSheet{}, errors.New("no record to update")
+		return &models.BalanceSheet{}, 2, errors.New("no record to update")
 	}
 
 	if res.Error != nil {
-		return &models.BalanceSheet{}, res.Error
+		return &models.BalanceSheet{}, 2, res.Error
 	}
 
 	_ = model.Where("account_name = ?", input.AccountName).First(&response)
 
-	return &response, nil
+	var balanceResponse models.Balance
+
+	_ = json.Unmarshal(response.Balance, &balanceResponse)
+
+	if !(newBalance.Debit == balanceResponse.Debit) && !(newBalance.Credit == balanceResponse.Credit) {
+		return &response, 1, nil
+	}
+
+	return &response, 0, nil
 }
