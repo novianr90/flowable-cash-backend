@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, uint, error)
+	UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error)
 }
 
 type service struct {
@@ -19,7 +19,7 @@ func NewUpdateBalanceSheetService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, uint, error) {
+func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error) {
 
 	var balanceFormatted models.Balance
 
@@ -39,10 +39,10 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 		Balance:     balance,
 	}
 
-	res, flag, err := s.repo.UpdateBalanceSheet(&query)
+	res, err := s.repo.UpdateBalanceSheet(&query)
 
 	if err != nil {
-		return ResponseBalanceSheet{}, 3, err
+		return ResponseBalanceSheet{}, err
 	}
 
 	var balanceRes models.Balance
@@ -56,6 +56,6 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 		Balance:     balanceRes,
 	}
 
-	return response, flag, nil
+	return response, nil
 
 }

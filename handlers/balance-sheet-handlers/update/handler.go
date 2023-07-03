@@ -23,7 +23,7 @@ func (h *handler) UpdateBalanceSheet(ctx *gin.Context) {
 		return
 	}
 
-	res, flag, err := h.service.UpdateBalanceSheet(&input)
+	res, err := h.service.UpdateBalanceSheet(&input)
 
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
@@ -32,7 +32,6 @@ func (h *handler) UpdateBalanceSheet(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message":       "Data succesfully updated",
-		"flag_update":   flag,
 		"balance_sheet": res,
 	})
 }
