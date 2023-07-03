@@ -39,8 +39,8 @@ func (r *repository) UpdateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 	newCredit := inputBalance.Credit - localBalance.Credit
 
 	newBalance := models.Balance{
-		Debit:  inputBalance.Debit + newDebit,
-		Credit: inputBalance.Credit + newCredit,
+		Debit:  localBalance.Debit + newDebit,
+		Credit: localBalance.Credit + newCredit,
 	}
 
 	formattedBalance, _ := json.Marshal(&newBalance)
