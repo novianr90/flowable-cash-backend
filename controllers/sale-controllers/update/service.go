@@ -26,6 +26,8 @@ func (s *service) UpdateSaleTransaction(input *InputUpdateSale) (ResponseTransac
 		Date:        formattedDate,
 		Total:       input.Total,
 		Description: input.Description,
+		FeeType:     input.FeeType,
+		Fee:         input.Fee,
 	}
 
 	res, err := s.repo.UpdateSaleTransaction(&saleTransaction)
@@ -40,6 +42,9 @@ func (s *service) UpdateSaleTransaction(input *InputUpdateSale) (ResponseTransac
 		Description: res.Description,
 		CreatedAt:   res.CreatedAt,
 		UpdatedAt:   res.UpdatedAt,
+		FeeType:     res.FeeType,
+		Fee:         res.Fee,
+		Type:        res.Type,
 	}
 
 	if err != nil {
