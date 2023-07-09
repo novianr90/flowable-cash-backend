@@ -43,6 +43,7 @@ func (s *service) GetAllAccounts(input *InputReadBalanceSheet) (*[]ResponseBalan
 			AccountNo:   value.AccountNo,
 			AccountName: value.AccountName,
 			Balance:     balance,
+			Month:       value.Month,
 			CreatedAt:   value.CreatedAt,
 			UpdatedAt:   value.UpdatedAt,
 		})
