@@ -22,10 +22,7 @@ const (
 	// Pendapatan (Laba)
 	Penjualan = "4-1000"
 
-	// Harga Pokok Penjualan
-	Pembelian = "5-1000"
-
 	// Beban
-	BebanPembelian = "6-1000"
-	BebanPenjualan = "6-2000"
+	BebanPembelian = "5-1000"
+	BebanPenjualan = "5-2000"
 )
