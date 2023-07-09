@@ -25,6 +25,7 @@ func (r *repository) CreateBalanceSheet(input *models.BalanceSheet) (*models.Bal
 	balanceSheet := models.BalanceSheet{
 		AccountNo:   input.AccountNo,
 		AccountName: input.AccountName,
+		Month:       input.Month,
 		Balance:     input.Balance,
 	}
 

@@ -2,13 +2,11 @@ package updateBalanceSheet
 
 import (
 	"encoding/json"
-	"flowable-cash-backend/helpers"
 	"flowable-cash-backend/models"
-	"strings"
 )
 
 type Service interface {
-	UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error)
+	UpdateAccount(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error)
 }
 
 type service struct {
@@ -19,27 +17,18 @@ func NewUpdateBalanceSheetService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error) {
+func (s *service) UpdateAccount(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error) {
 
-	var balanceFormatted models.Balance
-
-	formattedBalanceInString := input.Balance
-
-	formattedBalanceInString = strings.ReplaceAll(formattedBalanceInString, "\\", "")
-	formattedBalanceInString = strings.Replace(formattedBalanceInString, ",\n}", "\n}", 1)
-
-	_ = json.Unmarshal([]byte(formattedBalanceInString), &balanceFormatted)
-
-	balance, _ := json.Marshal(balanceFormatted)
+	balance, _ := json.Marshal(input.Balance)
 
 	query := models.BalanceSheet{
 		ID:          input.ID,
-		AccountNo:   helpers.AccountNoDecider(input.AccountName),
 		AccountName: input.AccountName,
 		Balance:     balance,
+		Month:       input.Month,
 	}
 
-	res, err := s.repo.UpdateBalanceSheet(&query)
+	res, err := s.repo.UpdateAccount(&query)
 
 	if err != nil {
 		return ResponseBalanceSheet{}, err
@@ -54,6 +43,9 @@ func (s *service) UpdateBalanceSheet(input *InputUpdateBalanceSheet) (ResponseBa
 		AccountName: res.AccountName,
 		AccountNo:   res.AccountNo,
 		Balance:     balanceRes,
+		Month:       res.Month,
+		CreatedAt:   res.CreatedAt,
+		UpdatedAt:   res.UpdatedAt,
 	}
 
 	return response, nil

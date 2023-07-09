@@ -33,8 +33,8 @@ func InitBalanceSheetRoutes(db *gorm.DB, routes *gin.RouterGroup) {
 
 	groupRouter.POST("", createHandler.CreateBalanceSheet)
 
-	groupRouter.GET("", readHandler.GetBalanceSheet)
-	groupRouter.GET("/", readHandler.GetBalanceSheetByAccountName)
+	groupRouter.GET("", readHandler.GetAllAccounts)
+	groupRouter.GET("/", readHandler.GetAllAccountsByAccountName)
 
-	groupRouter.PUT("", updateHandler.UpdateBalanceSheet)
+	groupRouter.PUT("", updateHandler.UpdateAccount)
 }
