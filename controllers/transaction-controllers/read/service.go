@@ -8,6 +8,7 @@ import (
 type Service interface {
 	ReadAllTransactions() ([]ResponseTransaction, error)
 	ReadTransactionById(input *InputReadTransaction) (ResponseTransaction, error)
+	ReadAllTransactionsByType(input *InputReadTransaction) ([]ResponseTransaction, error)
 }
 
 type service struct {
@@ -76,4 +77,38 @@ func (s *service) ReadTransactionById(input *InputReadTransaction) (ResponseTran
 	}
 
 	return response, nil
+}
+
+func (s *service) ReadAllTransactionsByType(input *InputReadTransaction) ([]ResponseTransaction, error) {
+	transactions := models.Transaction{
+		Type: input.Type,
+	}
+
+	res, err := s.repo.ReadAllTransactionsByType(&transactions)
+
+	if err != nil {
+		return []ResponseTransaction{}, err
+	}
+
+	var responses []ResponseTransaction
+
+	for _, value := range *res {
+
+		formattedDate := helpers.DateToString(value.Date)
+
+		responses = append(responses, ResponseTransaction{
+			ID:          value.ID,
+			Date:        formattedDate,
+			Name:        value.Name,
+			Type:        value.Type,
+			Total:       value.Total,
+			FeeType:     value.FeeType,
+			Fee:         value.Fee,
+			Description: value.Description,
+			CreatedAt:   value.CreatedAt,
+			UpdatedAt:   value.UpdatedAt,
+		})
+	}
+
+	return responses, nil
 }

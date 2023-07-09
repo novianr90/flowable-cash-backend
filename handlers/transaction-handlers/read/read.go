@@ -47,3 +47,23 @@ func (h *handler) GetTransactionById(c *gin.Context) {
 		"transaction": result,
 	})
 }
+
+func (h *handler) GetAllTransactionsByType(c *gin.Context) {
+	var input readTransaction.InputReadTransaction
+
+	if err := c.ShouldBindQuery(&input); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	result, err := h.service.ReadAllTransactionsByType(&input)
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"transaction": result,
+	})
+}

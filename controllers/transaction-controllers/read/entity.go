@@ -3,7 +3,8 @@ package readTransaction
 import "time"
 
 type InputReadTransaction struct {
-	ID uint `form:"id"`
+	ID   uint   `form:"id"`
+	Type string `form:"type"`
 }
 
 type ResponseTransaction struct {
