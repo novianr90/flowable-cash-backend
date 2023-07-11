@@ -25,13 +25,14 @@ func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*mo
 	db := r.db.Model(models.Transaction{})
 
 	newTransaction := models.Transaction{
-		Name:        input.Name,
-		Date:        input.Date,
-		Type:        input.Type,
-		Total:       input.Total,
-		FeeType:     input.FeeType,
-		Fee:         input.Fee,
-		Description: input.Description,
+		Name:          input.Name,
+		Date:          input.Date,
+		Type:          input.Type,
+		Total:         input.Total,
+		FeeType:       input.FeeType,
+		Fee:           input.Fee,
+		Description:   input.Description,
+		AlreadyPosted: input.AlreadyPosted,
 	}
 
 	updateTransaction := db.Where("id = ?", input.ID).Updates(&newTransaction)
