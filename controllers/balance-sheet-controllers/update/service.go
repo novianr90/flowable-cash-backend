@@ -7,6 +7,7 @@ import (
 
 type Service interface {
 	UpdateAccount(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error)
+	UpdateAccountAdmin(input *InputUpdateBalanceSheet) error
 }
 
 type service struct {
@@ -50,4 +51,22 @@ func (s *service) UpdateAccount(input *InputUpdateBalanceSheet) (ResponseBalance
 
 	return response, nil
 
+}
+
+func (s *service) UpdateAccountAdmin(input *InputUpdateBalanceSheet) error {
+	balance, _ := json.Marshal(input.Balance)
+
+	query := models.BalanceSheet{
+		AccountName: input.AccountName,
+		Month:       input.Month,
+		Balance:     balance,
+	}
+
+	err := s.repo.UpdateAccountAdmin(&query)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

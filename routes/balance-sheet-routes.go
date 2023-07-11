@@ -37,4 +37,7 @@ func InitBalanceSheetRoutes(db *gorm.DB, routes *gin.RouterGroup) {
 	groupRouter.GET("/", readHandler.GetAllAccountsByAccountName)
 
 	groupRouter.PUT("", updateHandler.UpdateAccount)
+
+	// Admin
+	groupRouter.PUT("/admin/reset", updateHandler.UpdateAccountAdmin)
 }

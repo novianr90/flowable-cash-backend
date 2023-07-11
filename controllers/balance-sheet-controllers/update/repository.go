@@ -10,6 +10,7 @@ import (
 
 type Repository interface {
 	UpdateAccount(input *models.BalanceSheet) (*models.BalanceSheet, error)
+	UpdateAccountAdmin(input *models.BalanceSheet) error
 }
 
 type repository struct {
@@ -79,4 +80,18 @@ func (r *repository) UpdateAccount(input *models.BalanceSheet) (*models.BalanceS
 	_ = json.Unmarshal(response.Balance, &balanceResponse)
 
 	return &response, nil
+}
+
+func (r *repository) UpdateAccountAdmin(input *models.BalanceSheet) error {
+	model := r.db.Model(&models.BalanceSheet{})
+
+	query := models.BalanceSheet{
+		Balance: input.Balance,
+	}
+
+	if err := model.Where("month = ?", input.Month).Where("account_name = ?", input.AccountName).Updates(&query).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
