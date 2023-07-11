@@ -57,9 +57,8 @@ func (s *service) UpdateAccountAdmin(input *InputUpdateBalanceSheet) error {
 	balance, _ := json.Marshal(input.Balance)
 
 	query := models.BalanceSheet{
-		AccountName: input.AccountName,
-		Month:       input.Month,
-		Balance:     balance,
+		Month:   input.Month,
+		Balance: balance,
 	}
 
 	err := s.repo.UpdateAccountAdmin(&query)

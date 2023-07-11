@@ -89,8 +89,26 @@ func (r *repository) UpdateAccountAdmin(input *models.BalanceSheet) error {
 		Balance: input.Balance,
 	}
 
-	if err := model.Where("month = ?", input.Month).Where("account_name = ?", input.AccountName).Updates(&query).Error; err != nil {
-		return err
+	allAccountName := []string{
+		"Kas",
+		"Persediaan Barang Dagang",
+		"Perlengkapan",
+		"Akumulasi Penyusutan Perlengkapan",
+		"Hutang Dagang",
+		"Modal",
+		"Laba Disimpan",
+		"Mengambil Laba",
+		"Penjualan",
+		"Beban Pembelian",
+		"Beban Penjualan",
+		"Beban Penyusutan",
+		"Beban Perlengkapan",
+	}
+
+	for _, value := range allAccountName {
+		if err := model.Where("month = ?", input.Month).Where("account_name = ?", value).Updates(&query).Error; err != nil {
+			return err
+		}
 	}
 
 	return nil
