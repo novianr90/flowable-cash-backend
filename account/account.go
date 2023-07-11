@@ -23,7 +23,8 @@ const (
 	Penjualan = "4-1000"
 
 	// Beban
-	BebanPembelian  = "5-1000"
-	BebanPenjualan  = "5-2000"
-	BebanPenyusutan = "5-3000"
+	BebanPembelian    = "5-1000"
+	BebanPenjualan    = "5-2000"
+	BebanPenyusutan   = "5-3000"
+	BebanPerlengkapan = "5-4000"
 )
