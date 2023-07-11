@@ -7,7 +7,8 @@ type Transaction struct {
 	Date        time.Time `gorm:"not null"`
 	Name        string    `gorm:"not null"`
 	Type        string
-	Total       uint `gorm:"not null"`
+	Payment     string `gorm:"not null"`
+	Total       uint   `gorm:"not null"`
 	FeeType     string
 	Fee         uint
 	Description string

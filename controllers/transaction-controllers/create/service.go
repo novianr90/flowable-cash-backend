@@ -27,6 +27,7 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 		Type:        input.Type,
 		Total:       input.Total,
 		Description: input.Description,
+		Payment:     input.Payment,
 		FeeType:     input.FeeType,
 		Fee:         input.Fee,
 	}
@@ -43,6 +44,7 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 		Total:       result.Total,
 		FeeType:     result.FeeType,
 		Fee:         result.Fee,
+		Payment:     result.Payment,
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,
 		UpdatedAt:   result.UpdatedAt,

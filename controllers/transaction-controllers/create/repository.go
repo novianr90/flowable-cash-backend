@@ -26,6 +26,7 @@ func (r *repository) CreateTransactionRepository(input *models.Transaction) (*mo
 		Type:        input.Type,
 		Total:       input.Total,
 		Description: input.Description,
+		Payment:     input.Payment,
 		FeeType:     input.FeeType,
 		Fee:         input.Fee,
 	}
