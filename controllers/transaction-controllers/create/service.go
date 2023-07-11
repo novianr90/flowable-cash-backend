@@ -37,17 +37,18 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 	date := helpers.DateToString(result.Date)
 
 	response := ResponseTransaction{
-		ID:          result.ID,
-		Date:        date,
-		Name:        result.Name,
-		Type:        result.Type,
-		Total:       result.Total,
-		FeeType:     result.FeeType,
-		Fee:         result.Fee,
-		Payment:     result.Payment,
-		Description: result.Description,
-		CreatedAt:   result.CreatedAt,
-		UpdatedAt:   result.UpdatedAt,
+		ID:            result.ID,
+		Date:          date,
+		Name:          result.Name,
+		Type:          result.Type,
+		Total:         result.Total,
+		FeeType:       result.FeeType,
+		Fee:           result.Fee,
+		Payment:       result.Payment,
+		Description:   result.Description,
+		CreatedAt:     result.CreatedAt,
+		UpdatedAt:     result.UpdatedAt,
+		AlreadyPosted: result.AlreadyPosted,
 	}
 
 	if err != nil {

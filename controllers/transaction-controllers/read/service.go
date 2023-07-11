@@ -29,17 +29,18 @@ func (s *service) ReadAllTransactions() ([]ResponseTransaction, error) {
 		formattedDate := helpers.DateToString(value.Date)
 
 		responses = append(responses, ResponseTransaction{
-			ID:          value.ID,
-			Date:        formattedDate,
-			Name:        value.Name,
-			Type:        value.Type,
-			Total:       value.Total,
-			FeeType:     value.FeeType,
-			Fee:         value.Fee,
-			Payment:     value.Payment,
-			Description: value.Description,
-			CreatedAt:   value.CreatedAt,
-			UpdatedAt:   value.UpdatedAt,
+			ID:            value.ID,
+			Date:          formattedDate,
+			Name:          value.Name,
+			Type:          value.Type,
+			Total:         value.Total,
+			FeeType:       value.FeeType,
+			Fee:           value.Fee,
+			Payment:       value.Payment,
+			Description:   value.Description,
+			CreatedAt:     value.CreatedAt,
+			UpdatedAt:     value.UpdatedAt,
+			AlreadyPosted: value.AlreadyPosted,
 		})
 	}
 
@@ -61,17 +62,18 @@ func (s *service) ReadTransactionById(input *InputReadTransaction) (ResponseTran
 	formattedDate := helpers.DateToString(result.Date)
 
 	response := ResponseTransaction{
-		ID:          result.ID,
-		Date:        formattedDate,
-		Name:        result.Name,
-		Type:        result.Type,
-		Total:       result.Total,
-		FeeType:     result.FeeType,
-		Fee:         result.Fee,
-		Payment:     result.Payment,
-		Description: result.Description,
-		CreatedAt:   result.CreatedAt,
-		UpdatedAt:   result.UpdatedAt,
+		ID:            result.ID,
+		Date:          formattedDate,
+		Name:          result.Name,
+		Type:          result.Type,
+		Total:         result.Total,
+		FeeType:       result.FeeType,
+		Fee:           result.Fee,
+		Payment:       result.Payment,
+		Description:   result.Description,
+		CreatedAt:     result.CreatedAt,
+		UpdatedAt:     result.UpdatedAt,
+		AlreadyPosted: result.AlreadyPosted,
 	}
 
 	if err != nil {
@@ -99,17 +101,18 @@ func (s *service) ReadAllTransactionsByType(input *InputReadTransaction) ([]Resp
 		formattedDate := helpers.DateToString(value.Date)
 
 		responses = append(responses, ResponseTransaction{
-			ID:          value.ID,
-			Date:        formattedDate,
-			Name:        value.Name,
-			Type:        value.Type,
-			Total:       value.Total,
-			FeeType:     value.FeeType,
-			Fee:         value.Fee,
-			Payment:     value.Payment,
-			Description: value.Description,
-			CreatedAt:   value.CreatedAt,
-			UpdatedAt:   value.UpdatedAt,
+			ID:            value.ID,
+			Date:          formattedDate,
+			Name:          value.Name,
+			Type:          value.Type,
+			Total:         value.Total,
+			FeeType:       value.FeeType,
+			Fee:           value.Fee,
+			Payment:       value.Payment,
+			Description:   value.Description,
+			CreatedAt:     value.CreatedAt,
+			UpdatedAt:     value.UpdatedAt,
+			AlreadyPosted: value.AlreadyPosted,
 		})
 	}
 
