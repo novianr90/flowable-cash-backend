@@ -68,3 +68,30 @@ func (h *handler) UpdateAccountAdmin(ctx *gin.Context) {
 		"message": "Data updated",
 	})
 }
+
+func (h *handler) UpdateSpecialAccount(ctx *gin.Context) {
+	var input updateBalanceSheet.InputUpdateBalanceSheet
+
+	if err := ctx.ShouldBind(&input); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err := h.service.UpdateSpecialAccount(&input)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Data updated",
+	})
+}

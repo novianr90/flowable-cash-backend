@@ -9,8 +9,8 @@ type InputUpdateTransaction struct {
 	Type          string `form:"transaction_type"`
 	Total         uint   `form:"transaction_total"`
 	Description   string `form:"description"`
-	FeeType       string `json:"fee_type"`
-	Fee           uint   `json:"transaction_fee"`
+	FeeType       string `form:"fee_type"`
+	Fee           uint   `form:"transaction_fee"`
 	AlreadyPosted uint   `form:"already_posted"`
 }
 

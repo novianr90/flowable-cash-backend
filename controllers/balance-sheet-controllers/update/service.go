@@ -7,6 +7,7 @@ import (
 
 type Service interface {
 	UpdateAccount(input *InputUpdateBalanceSheet) (ResponseBalanceSheet, error)
+	UpdateSpecialAccount(input *InputUpdateBalanceSheet) error
 	UpdateAccountAdmin(input *InputUpdateBalanceSheet) error
 }
 
@@ -51,6 +52,24 @@ func (s *service) UpdateAccount(input *InputUpdateBalanceSheet) (ResponseBalance
 
 	return response, nil
 
+}
+
+func (s *service) UpdateSpecialAccount(input *InputUpdateBalanceSheet) error {
+	balance, _ := json.Marshal(input.Balance)
+
+	query := models.BalanceSheet{
+		Month:       input.Month,
+		AccountName: input.AccountName,
+		Balance:     balance,
+	}
+
+	err := s.repo.UpdateSpecialAccount(&query)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *service) UpdateAccountAdmin(input *InputUpdateBalanceSheet) error {
