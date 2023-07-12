@@ -35,6 +35,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	routes.InitSaleTransactionRoutes(db, apiRouter)
 	routes.InitPurchaseRoutes(db, apiRouter)
 	routes.InitBalanceSheetRoutes(db, apiRouter)
+	routes.InitPostingRoutes(db, apiRouter)
 
 	return router
 }
