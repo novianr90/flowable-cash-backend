@@ -30,8 +30,6 @@ func main() {
 	PostingPenjualanScheduler(db)
 
 	app.Run(":" + PORT)
-
-	c.Stop()
 }
 
 func PostingPenjualanScheduler(db *gorm.DB) {
