@@ -25,9 +25,6 @@ func NewUseCaseService(db *gorm.DB) *usecase {
 func (u *usecase) PostingPenjualan() error {
 
 	var transactions []models.Transaction
-	var kas models.BalanceSheet
-	var penjualan models.BalanceSheet
-	var piutang models.BalanceSheet
 
 	if err := u.db.
 		Where("already_posted = ?", 0).
@@ -36,21 +33,27 @@ func (u *usecase) PostingPenjualan() error {
 		return err
 	}
 
+	var kas models.BalanceSheet
 	if err := u.db.
 		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Kas").First(&kas).Error; err != nil {
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
 		return err
 	}
 
+	var penjualan models.BalanceSheet
 	if err := u.db.
 		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Penjualan").First(&penjualan).Error; err != nil {
+		Where("account_name = ?", "Penjualan").
+		First(&penjualan).Error; err != nil {
 		return err
 	}
 
+	var piutang models.BalanceSheet
 	if err := u.db.
 		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Piutang Dagang").First(&piutang).Error; err != nil {
+		Where("account_name = ?", "Piutang Dagang").
+		First(&piutang).Error; err != nil {
 		return err
 	}
 
