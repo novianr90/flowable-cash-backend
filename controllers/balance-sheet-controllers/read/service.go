@@ -7,7 +7,7 @@ import (
 
 type Service interface {
 	GetAllAccounts(input *InputReadBalanceSheet) (*[]ResponseBalanceSheet, error)
-	GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*[]ResponseBalanceSheet, error)
+	GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*ResponseBalanceSheet, error)
 }
 
 type service struct {
@@ -53,7 +53,7 @@ func (s *service) GetAllAccounts(input *InputReadBalanceSheet) (*[]ResponseBalan
 
 }
 
-func (s *service) GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*[]ResponseBalanceSheet, error) {
+func (s *service) GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*ResponseBalanceSheet, error) {
 
 	query := models.BalanceSheet{
 		AccountName: input.AccountName,
@@ -63,23 +63,20 @@ func (s *service) GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*[]
 	res, err := s.repo.GetAllAccountsByAccountName(&query)
 
 	if err != nil {
-		return &[]ResponseBalanceSheet{}, err
+		return &ResponseBalanceSheet{}, err
 	}
 
-	var response []ResponseBalanceSheet
+	var balance models.Balance
+	_ = json.Unmarshal(res.Balance, &balance)
 
-	for _, value := range *res {
-		var balance models.Balance
-		_ = json.Unmarshal(value.Balance, &balance)
-		response = append(response, ResponseBalanceSheet{
-			ID:          value.ID,
-			AccountNo:   value.AccountNo,
-			AccountName: value.AccountName,
-			Balance:     balance,
-			Month:       value.Month,
-			CreatedAt:   value.CreatedAt,
-			UpdatedAt:   value.UpdatedAt,
-		})
+	response := ResponseBalanceSheet{
+		ID:          res.ID,
+		AccountNo:   res.AccountNo,
+		AccountName: res.AccountName,
+		Balance:     balance,
+		Month:       res.Month,
+		CreatedAt:   res.CreatedAt,
+		UpdatedAt:   res.UpdatedAt,
 	}
 
 	return &response, nil
