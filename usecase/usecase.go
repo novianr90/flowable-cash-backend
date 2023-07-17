@@ -24,8 +24,6 @@ func NewUseCaseService(db *gorm.DB) *usecase {
 
 func (u *usecase) PostingPenjualan() error {
 
-	accountModel := u.db.Model(&models.BalanceSheet{}).Where("month = ?", time.Now().Month())
-
 	var transactions []models.Transaction
 	var kas models.BalanceSheet
 	var penjualan models.BalanceSheet
@@ -38,15 +36,21 @@ func (u *usecase) PostingPenjualan() error {
 		return err
 	}
 
-	if err := accountModel.Where("account_name = ?", "Kas").First(&kas).Error; err != nil {
+	if err := u.db.
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").First(&kas).Error; err != nil {
 		return err
 	}
 
-	if err := accountModel.Where("account_name = ?", "Penjualan").First(&penjualan).Error; err != nil {
+	if err := u.db.
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Penjualan").First(&penjualan).Error; err != nil {
 		return err
 	}
 
-	if err := accountModel.Where("account_name = ?", "Piutang Dagang").First(&piutang).Error; err != nil {
+	if err := u.db.
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Piutang Dagang").First(&piutang).Error; err != nil {
 		return err
 	}
 
@@ -125,15 +129,15 @@ func (u *usecase) PostingPenjualan() error {
 	penjualan.Balance = penjualanFormatted
 	piutang.Balance = piutangFormatted
 
-	if err := accountModel.Save(&kas).Error; err != nil {
+	if err := u.db.Save(&kas).Error; err != nil {
 		return err
 	}
 
-	if err := accountModel.Save(&penjualan).Error; err != nil {
+	if err := u.db.Save(&penjualan).Error; err != nil {
 		return err
 	}
 
-	if err := accountModel.Save(&piutang).Error; err != nil {
+	if err := u.db.Save(&piutang).Error; err != nil {
 		return err
 	}
 
