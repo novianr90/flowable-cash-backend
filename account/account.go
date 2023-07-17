@@ -12,7 +12,8 @@ const (
 	AkumulasiPenyusutanPerlengkapan = "1-2101"
 
 	//Liabilitas (Kewajiban)
-	HutangDagang = "2-1000"
+	HutangDagang  = "2-1000"
+	PiutangDagang = "2-2000"
 
 	// Ekuitas (Modal)
 	ModalOwner  = "3-1000"
@@ -22,9 +23,12 @@ const (
 	// Pendapatan (Laba)
 	Penjualan = "4-1000"
 
+	// HPP
+	Pembelian = "5-1000"
+
 	// Beban
-	BebanPembelian    = "5-1000"
-	BebanPenjualan    = "5-2000"
-	BebanPenyusutan   = "5-3000"
-	BebanPerlengkapan = "5-4000"
+	BebanOngkosKirim = "6-1000"
+	BebanPengemasan  = "6-2000"
+	BebanPenyusutan  = "6-3000"
+	BebanLainnya     = "6-4000"
 )

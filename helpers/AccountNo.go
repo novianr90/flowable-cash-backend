@@ -32,17 +32,23 @@ func AccountNoDecider(value string) string {
 	case "Penjualan":
 		return account.Penjualan
 
-	case "Beban Pembelian":
-		return account.BebanPembelian
+	case "Biaya Pengemasan":
+		return account.BebanPengemasan
 
-	case "Beban Penjualan":
-		return account.BebanPenjualan
+	case "Biaya Ongkos Kirim":
+		return account.BebanOngkosKirim
 
 	case "Beban Penyusutan":
 		return account.BebanPenyusutan
 
-	case "Beban Perlengkapan":
-		return account.BebanPerlengkapan
+	case "Beban Lainnya":
+		return account.BebanLainnya
+
+	case "Pembelian":
+		return account.Pembelian
+
+	case "Piutang Dagang":
+		return account.PiutangDagang
 	}
 
 	return ""
