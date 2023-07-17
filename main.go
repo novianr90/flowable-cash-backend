@@ -27,7 +27,7 @@ func main() {
 
 	app := SetupRouter(db)
 
-	PostingPenjualanScheduler(db)
+	go PostingPenjualanScheduler(db)
 
 	app.Run(":" + PORT)
 }
