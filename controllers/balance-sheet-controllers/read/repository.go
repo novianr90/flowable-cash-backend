@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	GetAllAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error)
 	GetAllAccountsByAccountName(input *models.BalanceSheet) (*models.BalanceSheet, error)
+	GetAllSpecificAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error)
 }
 
 type repository struct {
@@ -48,4 +49,20 @@ func (r *repository) GetAllAccountsByAccountName(input *models.BalanceSheet) (*m
 	}
 
 	return &balanceSheet, nil
+}
+
+func (r *repository) GetAllSpecificAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error) {
+
+	var accounts []models.BalanceSheet
+
+	err := r.db.
+		Model(&models.BalanceSheet{}).
+		Where("account_name = ?", input.AccountName).
+		Find(&accounts).Error
+
+	if err != nil {
+		return &[]models.BalanceSheet{}, err
+	}
+
+	return &accounts, nil
 }

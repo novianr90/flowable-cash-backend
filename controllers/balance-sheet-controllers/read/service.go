@@ -8,6 +8,7 @@ import (
 type Service interface {
 	GetAllAccounts(input *InputReadBalanceSheet) (*[]ResponseBalanceSheet, error)
 	GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*ResponseBalanceSheet, error)
+	GetAllSpecificAccounts(input *InputReadBalanceSheet) (*[]ResponseBalanceSheet, error)
 }
 
 type service struct {
@@ -77,6 +78,39 @@ func (s *service) GetAllAccountsByAccountName(input *InputReadBalanceSheet) (*Re
 		Month:       res.Month,
 		CreatedAt:   res.CreatedAt,
 		UpdatedAt:   res.UpdatedAt,
+	}
+
+	return &response, nil
+}
+
+func (s *service) GetAllSpecificAccounts(input *InputReadBalanceSheet) (*[]ResponseBalanceSheet, error) {
+	query := models.BalanceSheet{
+		AccountName: input.AccountName,
+	}
+
+	var response []ResponseBalanceSheet
+
+	res, err := s.repo.GetAllSpecificAccounts(&query)
+
+	if err != nil {
+		return &[]ResponseBalanceSheet{}, err
+	}
+
+	for _, value := range *res {
+
+		var balance models.Balance
+
+		_ = json.Unmarshal(value.Balance, &balance)
+
+		response = append(response, ResponseBalanceSheet{
+			ID:          value.ID,
+			AccountNo:   value.AccountNo,
+			AccountName: value.AccountName,
+			Balance:     balance,
+			Month:       value.Month,
+			CreatedAt:   value.CreatedAt,
+			UpdatedAt:   value.UpdatedAt,
+		})
 	}
 
 	return &response, nil

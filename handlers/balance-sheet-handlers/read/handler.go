@@ -69,3 +69,30 @@ func (h *handler) GetAllAccountsByAccountName(ctx *gin.Context) {
 		"balance_sheet": result,
 	})
 }
+
+func (h *handler) GetAllSpecificAccounts(ctx *gin.Context) {
+	var input readBalanceSheet.InputReadBalanceSheet
+
+	if err := ctx.ShouldBindQuery(&input); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	result, err := h.service.GetAllSpecificAccounts(&input)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":        "success",
+		"balance_sheet": result,
+	})
+}
