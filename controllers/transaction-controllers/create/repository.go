@@ -21,13 +21,15 @@ func NewRepositoryCreate(db *gorm.DB) *repository {
 func (r *repository) CreateTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
 
 	transaction := models.Transaction{
-		Name:        input.Name,
-		Date:        input.Date,
-		Type:        input.Type,
-		Total:       input.Total,
-		Description: input.Description,
-		FeeType:     input.FeeType,
-		Fee:         input.Fee,
+		Name:          input.Name,
+		Date:          input.Date,
+		Type:          input.Type,
+		Total:         input.Total,
+		Description:   input.Description,
+		Payment:       input.Payment,
+		FeeType:       input.FeeType,
+		Fee:           input.Fee,
+		AlreadyPosted: 0,
 	}
 
 	if err := r.db.Create(&transaction).Error; err != nil {

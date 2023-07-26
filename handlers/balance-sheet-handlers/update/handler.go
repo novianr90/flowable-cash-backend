@@ -15,23 +15,83 @@ func NewUpdateBalanceSheetHandler(service updateBalanceSheet.Service) *handler {
 	return &handler{service: service}
 }
 
-func (h *handler) UpdateBalanceSheet(ctx *gin.Context) {
+func (h *handler) UpdateAccount(ctx *gin.Context) {
 	var input updateBalanceSheet.InputUpdateBalanceSheet
 
 	if err := ctx.ShouldBind(&input); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
 		return
 	}
 
-	res, err := h.service.UpdateBalanceSheet(&input)
+	res, err := h.service.UpdateAccount(&input)
 
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"message":       "Data succesfully updated",
+		"status":        "success",
 		"balance_sheet": res,
+	})
+}
+
+func (h *handler) UpdateAccountAdmin(ctx *gin.Context) {
+	var input updateBalanceSheet.InputUpdateBalanceSheet
+
+	if err := ctx.ShouldBind(&input); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err := h.service.UpdateAccountAdmin(&input)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Data updated",
+	})
+}
+
+func (h *handler) UpdateSpecialAccount(ctx *gin.Context) {
+	var input updateBalanceSheet.InputUpdateBalanceSheet
+
+	if err := ctx.ShouldBind(&input); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	err := h.service.UpdateSpecialAccount(&input)
+
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"status":  "error",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Data updated",
 	})
 }

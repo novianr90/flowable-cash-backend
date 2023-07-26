@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var typePurchase = "Pembelian"
+
 type Repository interface {
 	UpdatePurchaseTransaction(input *models.Transaction) (*models.Transaction, error)
 }
@@ -20,7 +22,6 @@ func NewUpdatePurchaseRepository(db *gorm.DB) *repository {
 }
 
 func (r *repository) UpdatePurchaseTransaction(input *models.Transaction) (*models.Transaction, error) {
-	typePurchase := "Purchase"
 
 	db := r.db.Model(&models.Transaction{}).Where("type = ?", typePurchase)
 

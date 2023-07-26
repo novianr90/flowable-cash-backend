@@ -22,12 +22,13 @@ func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (Respo
 	formattedDate, _ := helpers.StringToDate(input.Date)
 
 	transaction := models.Transaction{
-		ID:          input.ID,
-		Name:        input.Name,
-		Date:        formattedDate,
-		Type:        input.Type,
-		Total:       input.Total,
-		Description: input.Description,
+		ID:            input.ID,
+		Name:          input.Name,
+		Date:          formattedDate,
+		Type:          input.Type,
+		Total:         input.Total,
+		Description:   input.Description,
+		AlreadyPosted: input.AlreadyPosted,
 	}
 
 	result, err := s.repo.UpdateTransactionRepository(&transaction)
@@ -35,16 +36,17 @@ func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (Respo
 	date := helpers.DateToString(result.Date)
 
 	response := ResponseTransaction{
-		ID:          result.ID,
-		Date:        date,
-		Name:        result.Name,
-		Type:        result.Type,
-		Total:       result.Total,
-		FeeType:     result.FeeType,
-		Fee:         result.Fee,
-		Description: result.Description,
-		CreatedAt:   result.CreatedAt,
-		UpdatedAt:   result.UpdatedAt,
+		ID:            result.ID,
+		Date:          date,
+		Name:          result.Name,
+		Type:          result.Type,
+		Total:         result.Total,
+		FeeType:       result.FeeType,
+		Fee:           result.Fee,
+		Description:   result.Description,
+		CreatedAt:     result.CreatedAt,
+		UpdatedAt:     result.UpdatedAt,
+		AlreadyPosted: result.AlreadyPosted,
 	}
 
 	if err != nil {

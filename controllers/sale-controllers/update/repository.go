@@ -19,9 +19,9 @@ func NewUpdateSaleTransactionRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) UpdateSaleTransaction(input *models.Transaction) (*models.Transaction, error) {
+var typeSale = "Penjualan"
 
-	typeSale := "Sale"
+func (r *repository) UpdateSaleTransaction(input *models.Transaction) (*models.Transaction, error) {
 
 	db := r.db.Model(&models.Transaction{}).Where("type = ?", typeSale)
 

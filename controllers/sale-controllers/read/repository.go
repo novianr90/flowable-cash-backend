@@ -20,8 +20,9 @@ func NewRepositoryRead(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
+var typeSale = "Penjualan"
+
 func (r *repository) ReadAllSaleTypeTransactions() (*[]models.Transaction, error) {
-	typeSale := "Sale"
 
 	var saleTransactions []models.Transaction
 
@@ -37,7 +38,6 @@ func (r *repository) ReadAllSaleTypeTransactions() (*[]models.Transaction, error
 }
 
 func (r *repository) ReadSaleTypeById(input *models.Transaction) (*models.Transaction, error) {
-	typeSale := "Sale"
 
 	var saleTransaction models.Transaction
 

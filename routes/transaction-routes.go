@@ -47,5 +47,8 @@ func InitTransactionRoutes(db *gorm.DB, route *gin.RouterGroup) {
 	groupRoute.GET("", readHandler.GetAllTransactions)
 	groupRoute.GET("/", readHandler.GetTransactionById)
 
+	// All Transactions By Type
+	groupRoute.GET("/type", readHandler.GetAllTransactionsByType)
+
 	groupRoute.PUT("", updateHandler.UpdateTransaction)
 }

@@ -7,8 +7,9 @@ import (
 )
 
 type Repository interface {
-	GetBalanceSheet() (*[]models.BalanceSheet, error)
-	GetBalanceSheetByAccountName(input *models.BalanceSheet) (*models.BalanceSheet, error)
+	GetAllAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error)
+	GetAllAccountsByAccountName(input *models.BalanceSheet) (*models.BalanceSheet, error)
+	GetAllSpecificAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error)
 }
 
 type repository struct {
@@ -19,12 +20,12 @@ func NewReadBalanceSheetRepository(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) GetBalanceSheet() (*[]models.BalanceSheet, error) {
+func (r *repository) GetAllAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error) {
 	var balanceSheet []models.BalanceSheet
 
 	model := r.db.Model(&models.BalanceSheet{})
 
-	err := model.Find(&balanceSheet).Error
+	err := model.Where("month = ?", input.Month).Find(&balanceSheet).Error
 
 	if err != nil {
 		return &[]models.BalanceSheet{}, err
@@ -33,16 +34,35 @@ func (r *repository) GetBalanceSheet() (*[]models.BalanceSheet, error) {
 	return &balanceSheet, nil
 }
 
-func (r *repository) GetBalanceSheetByAccountName(input *models.BalanceSheet) (*models.BalanceSheet, error) {
+func (r *repository) GetAllAccountsByAccountName(input *models.BalanceSheet) (*models.BalanceSheet, error) {
 	var balanceSheet models.BalanceSheet
 
 	model := r.db.Model(&models.BalanceSheet{})
 
-	err := model.Where("account_name = ?", input.AccountName).First(&balanceSheet).Error
+	err := model.
+		Where("month = ?", input.Month).
+		Where("account_name = ?", input.AccountName).
+		First(&balanceSheet).Error
 
 	if err != nil {
 		return &models.BalanceSheet{}, err
 	}
 
 	return &balanceSheet, nil
+}
+
+func (r *repository) GetAllSpecificAccounts(input *models.BalanceSheet) (*[]models.BalanceSheet, error) {
+
+	var accounts []models.BalanceSheet
+
+	err := r.db.
+		Model(&models.BalanceSheet{}).
+		Where("account_name = ?", input.AccountName).
+		Find(&accounts).Error
+
+	if err != nil {
+		return &[]models.BalanceSheet{}, err
+	}
+
+	return &accounts, nil
 }

@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	ReadAllTransactions() (*[]models.Transaction, error)
 	ReadTransactionById(input *models.Transaction) (*models.Transaction, error)
+	ReadAllTransactionsByType(input *models.Transaction) (*[]models.Transaction, error)
 }
 
 type repository struct {
@@ -45,4 +46,18 @@ func (r *repository) ReadTransactionById(input *models.Transaction) (*models.Tra
 	}
 
 	return &transaction, nil
+}
+
+func (r *repository) ReadAllTransactionsByType(input *models.Transaction) (*[]models.Transaction, error) {
+	db := r.db.Model(&models.Transaction{})
+
+	var transactions []models.Transaction
+
+	err := db.Where("type = ?", input.Type).Find(&transactions).Error
+
+	if err != nil {
+		return &[]models.Transaction{}, err
+	}
+
+	return &transactions, nil
 }

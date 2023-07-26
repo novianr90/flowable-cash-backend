@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 
 	"gorm.io/gorm"
 )
@@ -16,16 +16,10 @@ func Connection() *gorm.DB {
 		db  *gorm.DB
 		err error
 
-		username = os.Getenv("DATABASE_USERNAME")
-		password = os.Getenv("DATABASE_PASSWORD")
-		host     = os.Getenv("DATABASE_HOST")
-		port     = os.Getenv("DATABASE_PORT")
-		database = os.Getenv("DATABASE_NAME")
+		mySql = os.Getenv("DATABASE_URL")
 	)
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=True&loc=Local&tls=true", username, password, host, port, database)
-
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(mySql), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal("Error connecting to database:", err)
@@ -36,6 +30,7 @@ func Connection() *gorm.DB {
 	err = db.Debug().AutoMigrate(
 		models.Transaction{},
 		models.BalanceSheet{},
+		models.Posting{},
 	)
 
 	if err != nil {

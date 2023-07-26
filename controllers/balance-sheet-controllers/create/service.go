@@ -20,7 +20,7 @@ func NewCreateBalanceSheetService(repo Repository) *service {
 
 func (s *service) CreateBalanceSheet(input *InputCreateBalanceSheet) (*ResponseBalanceSheet, error) {
 
-	balance, err := json.Marshal(helpers.DebitCreditDecider(input.AccountName, input.Balance))
+	balance, err := json.Marshal(input.Balance)
 
 	if err != nil {
 		return &ResponseBalanceSheet{}, err
@@ -30,6 +30,7 @@ func (s *service) CreateBalanceSheet(input *InputCreateBalanceSheet) (*ResponseB
 		AccountNo:   helpers.AccountNoDecider(input.AccountName),
 		AccountName: input.AccountName,
 		Balance:     balance,
+		Month:       input.Month,
 	}
 
 	res, err := s.repo.CreateBalanceSheet(&query)
@@ -46,6 +47,7 @@ func (s *service) CreateBalanceSheet(input *InputCreateBalanceSheet) (*ResponseB
 		ID:          res.ID,
 		AccountNo:   res.AccountNo,
 		AccountName: res.AccountName,
+		Month:       res.Month,
 		Balance:     balanceRes,
 		CreatedAt:   res.CreatedAt,
 		UpdatedAt:   res.UpdatedAt,

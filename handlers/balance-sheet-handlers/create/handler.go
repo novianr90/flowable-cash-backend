@@ -18,7 +18,7 @@ func NewCreateBalanceSheetHandler(service createBalanceSheet.Service) *handler {
 func (h *handler) CreateBalanceSheet(ctx *gin.Context) {
 	var input createBalanceSheet.InputCreateBalanceSheet
 
-	if err := ctx.ShouldBindQuery(&input); err != nil {
+	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
@@ -31,6 +31,7 @@ func (h *handler) CreateBalanceSheet(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{
+		"status":        "data successfully created",
 		"balance_sheet": res,
 	})
 }
