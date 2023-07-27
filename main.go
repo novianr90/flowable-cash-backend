@@ -47,16 +47,18 @@ func PostingPenjualanScheduler(db *gorm.DB) {
 		log.Println("Error when do job:", err)
 	}
 
-	_, err = c.AddFunc("@every 5m", func() {
-		err := useCaseService.PostingPembelian()
-		if err != nil {
-			log.Println("Error when posting:", err)
-		}
-	})
+	// Pengeluaran will be much, so it will not based on this 1 method, will be more
 
-	if err != nil {
-		log.Println("Error when do job:", err)
-	}
+	// _, err = c.AddFunc("@every 5m", func() {
+	// 	err := useCaseService.PostingPembelian()
+	// 	if err != nil {
+	// 		log.Println("Error when posting:", err)
+	// 	}
+	// })
+
+	// if err != nil {
+	// 	log.Println("Error when do job:", err)
+	// }
 
 	c.Start()
 

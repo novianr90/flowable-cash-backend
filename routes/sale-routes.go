@@ -1,11 +1,11 @@
 package routes
 
 import (
-	readSale "flowable-cash-backend/controllers/sale-controllers/read"
-	updateSale "flowable-cash-backend/controllers/sale-controllers/update"
+	createSale "flowable-cash-backend/controllers/pemasukkan-controllers/create"
+	readSale "flowable-cash-backend/controllers/pemasukkan-controllers/read"
 
-	handlerReadSaleTransaction "flowable-cash-backend/handlers/sale-handlers/read"
-	handlerUpdateTransaction "flowable-cash-backend/handlers/sale-handlers/update"
+	handlerCreateSale "flowable-cash-backend/handlers/pemasukkan-handlers/create"
+	handlerReadSaleTransaction "flowable-cash-backend/handlers/pemasukkan-handlers/read"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,17 +17,17 @@ func InitSaleTransactionRoutes(db *gorm.DB, route *gin.RouterGroup) {
 	readService := readSale.NewReadSaleService(readRepository)
 	readHandler := handlerReadSaleTransaction.NewReadSaleHandler(readService)
 
-	// Update
-	updateRepository := updateSale.NewUpdateSaleTransactionRepository(db)
-	updateService := updateSale.NewUpdateSaleTransactionService(updateRepository)
-	updateHandler := handlerUpdateTransaction.NewUpdateSaleTransactionHandler(updateService)
+	// Create
+	createRepo := createSale.NewRepositoryCreate(db)
+	createService := createSale.NewServiceCreate(createRepo)
+	createHandler := handlerCreateSale.NewHandlerCreateSale(createService)
 
-	groupRoute := route.Group("/sales")
+	groupRoute := route.Group("/pemasukkan")
 
 	// Read
 	groupRoute.GET("", readHandler.GetAllSaleTransactions)
 	groupRoute.GET("/", readHandler.GetSaleTransactionById)
 
-	// Update
-	groupRoute.PUT("", updateHandler.UpdateSaleTransactionById)
+	// Create
+	groupRoute.POST("", createHandler.CreatePemasukkan)
 }

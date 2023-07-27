@@ -1,11 +1,11 @@
 package routes
 
 import (
-	readPurchase "flowable-cash-backend/controllers/purchase-controllers/read"
-	updatePurchase "flowable-cash-backend/controllers/purchase-controllers/update"
+	createPurchase "flowable-cash-backend/controllers/pengeluaran-controllers/create"
+	readPurchase "flowable-cash-backend/controllers/pengeluaran-controllers/read"
 
-	handlerReadPurchase "flowable-cash-backend/handlers/purchase-handlers/read"
-	handlerUpdatePurchase "flowable-cash-backend/handlers/purchase-handlers/update"
+	handlerCreatePurchase "flowable-cash-backend/handlers/pengeluaran-handlers/create"
+	handlerReadPurchase "flowable-cash-backend/handlers/pengeluaran-handlers/read"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,15 +17,15 @@ func InitPurchaseRoutes(db *gorm.DB, routes *gin.RouterGroup) {
 	readService := readPurchase.NewReadPurchaseService(readRepo)
 	readHandler := handlerReadPurchase.NewReadPurchaseHandler(readService)
 
-	// Update
-	updateRepo := updatePurchase.NewUpdatePurchaseRepository(db)
-	updateService := updatePurchase.NewServiceUpdatePurchase(updateRepo)
-	updateHandler := handlerUpdatePurchase.NewUpdatePurchaseHandler(updateService)
+	// Create
+	createRepo := createPurchase.NewRepositoryCreate(db)
+	createService := createPurchase.NewServiceCreate(createRepo)
+	createHandler := handlerCreatePurchase.NewHandlerCreatePurchase(createService)
 
-	groupRoute := routes.Group("/purchases")
+	groupRoute := routes.Group("/pengeluaran")
 
 	groupRoute.GET("", readHandler.GetPurchaseTransactions)
 	groupRoute.GET("/", readHandler.GetPurchaseTransactionById)
 
-	groupRoute.PUT("", updateHandler.UpdatePurchaseTransactionById)
+	groupRoute.POST("", createHandler.CreatePemasukkan)
 }

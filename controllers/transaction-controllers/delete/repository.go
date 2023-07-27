@@ -8,7 +8,7 @@ import (
 )
 
 type Repository interface {
-	DeleteTransactionRepository(input *models.Transaction) (*models.Transaction, error)
+	DeleteTransactionRepository(input uint, trxType string) error
 }
 
 type repository struct {
@@ -19,23 +19,44 @@ func NewRepositoryDelete(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) DeleteTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
+func (r *repository) DeleteTransactionRepository(input uint, trxType string) error {
 
-	var transactionModel models.Transaction
-
-	db := r.db.Model(&transactionModel)
-
-	checkTransaction := db.Select("*").Where("id = ?", input.ID).Find(&transactionModel)
-
-	if checkTransaction.RowsAffected < 1 {
-		return &transactionModel, errors.New("no data found")
+	if trxType == "" {
+		return errors.New("please specify the type")
 	}
 
-	deleteStudentId := db.Select("*").Where("id = ?", input.ID).Find(&transactionModel).Delete(&transactionModel)
+	if trxType == "Pemasukkan" {
 
-	if deleteStudentId.Error != nil {
-		return &transactionModel, deleteStudentId.Error
+		var container models.Pemasukkan
+
+		checkTransaction := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container)
+
+		if checkTransaction.RowsAffected < 1 {
+			return errors.New("no data found")
+		}
+
+		deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
+
+		if deleteTransactionId.Error != nil {
+			return deleteTransactionId.Error
+		}
+
+		return nil
+	} else {
+		var container models.Pengeluaran
+
+		checkTransaction := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container)
+
+		if checkTransaction.RowsAffected < 1 {
+			return errors.New("no data found")
+		}
+
+		deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
+
+		if deleteTransactionId.Error != nil {
+			return deleteTransactionId.Error
+		}
+
+		return nil
 	}
-
-	return &transactionModel, nil
 }

@@ -8,8 +8,8 @@ import (
 
 type Repository interface {
 	// Read: Tx Sale Type
-	ReadAllSaleTypeTransactions() (*[]models.Transaction, error)
-	ReadSaleTypeById(input *models.Transaction) (*models.Transaction, error)
+	ReadAllSaleTypeTransactions() (*[]models.Pemasukkan, error)
+	ReadSaleTypeById(input *models.Pemasukkan) (*models.Pemasukkan, error)
 }
 
 type repository struct {
@@ -22,31 +22,31 @@ func NewRepositoryRead(db *gorm.DB) *repository {
 
 var typeSale = "Penjualan"
 
-func (r *repository) ReadAllSaleTypeTransactions() (*[]models.Transaction, error) {
+func (r *repository) ReadAllSaleTypeTransactions() (*[]models.Pemasukkan, error) {
 
-	var saleTransactions []models.Transaction
+	var saleTransactions []models.Pemasukkan
 
-	db := r.db.Model(&models.Transaction{})
+	db := r.db.Model(&models.Pemasukkan{})
 
 	err := db.Where("type = ?", typeSale).Find(&saleTransactions).Error
 
 	if err != nil {
-		return &[]models.Transaction{}, err
+		return &[]models.Pemasukkan{}, err
 	}
 
 	return &saleTransactions, nil
 }
 
-func (r *repository) ReadSaleTypeById(input *models.Transaction) (*models.Transaction, error) {
+func (r *repository) ReadSaleTypeById(input *models.Pemasukkan) (*models.Pemasukkan, error) {
 
-	var saleTransaction models.Transaction
+	var saleTransaction models.Pemasukkan
 
-	db := r.db.Model(&models.Transaction{})
+	db := r.db.Model(&models.Pemasukkan{})
 
 	err := db.Where("type = ?", typeSale).Where("id = ?", input.ID).First(&saleTransaction).Error
 
 	if err != nil {
-		return &models.Transaction{}, err
+		return &models.Pemasukkan{}, err
 	}
 
 	return &saleTransaction, nil

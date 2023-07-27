@@ -28,7 +28,8 @@ func Connection() *gorm.DB {
 	fmt.Println("connected to database")
 
 	err = db.Debug().AutoMigrate(
-		models.Transaction{},
+		models.Pengeluaran{},
+		models.Pemasukkan{},
 		models.BalanceSheet{},
 		models.Posting{},
 	)

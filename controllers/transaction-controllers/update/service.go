@@ -1,12 +1,13 @@
 package updateTransaction
 
 import (
+	"errors"
 	"flowable-cash-backend/helpers"
 	"flowable-cash-backend/models"
 )
 
 type Service interface {
-	UpdateTransactionService(input *InputUpdateTransaction) (ResponseTransaction, error)
+	UpdateTransactionService(input *InputUpdateTransaction) error
 }
 
 type service struct {
@@ -17,41 +18,44 @@ func NewUpdateService(repo Repository) *service {
 	return &service{repo: repo}
 }
 
-func (s *service) UpdateTransactionService(input *InputUpdateTransaction) (ResponseTransaction, error) {
+func (s *service) UpdateTransactionService(input *InputUpdateTransaction) error {
 
-	formattedDate, _ := helpers.StringToDate(input.Date)
+	trxType := input.Type
 
-	transaction := models.Transaction{
-		ID:            input.ID,
-		Name:          input.Name,
-		Date:          formattedDate,
-		Type:          input.Type,
-		Total:         input.Total,
-		Description:   input.Description,
-		AlreadyPosted: input.AlreadyPosted,
+	if trxType == "Pemasukkan" {
+
+		formattedDate, _ := helpers.StringToDate(input.Date)
+
+		updatePemasukkan := models.Pemasukkan{
+			ID:          input.ID,
+			Description: input.Description,
+			Total:       input.Total,
+			Date:        formattedDate,
+		}
+
+		err := s.repo.UpdateTransactionRepository(input.Type, updatePemasukkan)
+
+		if err != nil {
+			return err
+		}
+	} else {
+
+		formattedDate, _ := helpers.StringToDate(input.Date)
+
+		updatePengeluaran := models.Pengeluaran{
+			ID:          input.ID,
+			Description: input.Description,
+			Total:       input.Total,
+			Date:        formattedDate,
+		}
+
+		err := s.repo.UpdateTransactionRepository(input.Type, updatePengeluaran)
+
+		if err != nil {
+			return err
+		}
+
 	}
 
-	result, err := s.repo.UpdateTransactionRepository(&transaction)
-
-	date := helpers.DateToString(result.Date)
-
-	response := ResponseTransaction{
-		ID:            result.ID,
-		Date:          date,
-		Name:          result.Name,
-		Type:          result.Type,
-		Total:         result.Total,
-		FeeType:       result.FeeType,
-		Fee:           result.Fee,
-		Description:   result.Description,
-		CreatedAt:     result.CreatedAt,
-		UpdatedAt:     result.UpdatedAt,
-		AlreadyPosted: result.AlreadyPosted,
-	}
-
-	if err != nil {
-		return ResponseTransaction{}, err
-	}
-
-	return response, nil
+	return errors.New("please input type")
 }

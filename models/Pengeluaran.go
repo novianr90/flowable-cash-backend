@@ -2,15 +2,12 @@ package models
 
 import "time"
 
-type Transaction struct {
+type Pengeluaran struct {
 	ID            uint      `gorm:"not null;primaryKey"`
 	Date          time.Time `gorm:"not null"`
 	Name          string    `gorm:"not null"`
-	Type          string
-	Payment       string `gorm:"not null"`
-	Total         uint   `gorm:"not null"`
-	FeeType       string
-	Fee           uint
+	Payment       string    `gorm:"not null"`
+	Total         uint      `gorm:"not null"`
 	Description   string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time

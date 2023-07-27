@@ -1,22 +1,22 @@
-package handlerReadPurchase
+package handlerReadSaleTransaction
 
 import (
-	readPurchase "flowable-cash-backend/controllers/purchase-controllers/read"
+	readSale "flowable-cash-backend/controllers/pemasukkan-controllers/read"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type handler struct {
-	service readPurchase.Service
+	service readSale.Service
 }
 
-func NewReadPurchaseHandler(service readPurchase.Service) *handler {
+func NewReadSaleHandler(service readSale.Service) *handler {
 	return &handler{service: service}
 }
 
-func (h *handler) GetPurchaseTransactions(c *gin.Context) {
-	result, err := h.service.ReadAllPurchaseTypeTransactions()
+func (h *handler) GetAllSaleTransactions(c *gin.Context) {
+	result, err := h.service.ReadAllSaleTypeTransactions()
 
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
@@ -28,15 +28,15 @@ func (h *handler) GetPurchaseTransactions(c *gin.Context) {
 	})
 }
 
-func (h *handler) GetPurchaseTransactionById(c *gin.Context) {
-	var input readPurchase.InputReadPurchaseTransaction
+func (h *handler) GetSaleTransactionById(c *gin.Context) {
+	var input readSale.InputReadSaleTransaction
 
 	if err := c.ShouldBindQuery(&input); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	result, err := h.service.ReadPurchaseTypeById(&input)
+	res, err := h.service.ReadSaleTypeById(&input)
 
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
@@ -44,6 +44,7 @@ func (h *handler) GetPurchaseTransactionById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"transaction": result,
+		"pemasukkan": res,
+		"status":     "success",
 	})
 }

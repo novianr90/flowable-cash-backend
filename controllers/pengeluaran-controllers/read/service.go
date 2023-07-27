@@ -1,4 +1,4 @@
-package readSale
+package readPurchase
 
 import (
 	"flowable-cash-backend/helpers"
@@ -6,20 +6,21 @@ import (
 )
 
 type Service interface {
-	ReadAllSaleTypeTransactions() ([]ResponseTransaction, error)
-	ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTransaction, error)
+	// Read: Tx Purchase Type
+	ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, error)
+	ReadPurchaseTypeById(input *InputReadPurchaseTransaction) (ResponseTransaction, error)
 }
 
 type service struct {
-	repo Repository
+	repository Repository
 }
 
-func NewReadSaleService(repo Repository) *service {
-	return &service{repo: repo}
+func NewReadPurchaseService(repository Repository) *service {
+	return &service{repository: repository}
 }
 
-func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
-	result, err := s.repo.ReadAllSaleTypeTransactions()
+func (s *service) ReadAllPurchaseTypeTransactions() ([]ResponseTransaction, error) {
+	result, err := s.repository.ReadAllPurchaseTypeTransactions()
 
 	var responses []ResponseTransaction
 
@@ -35,9 +36,6 @@ func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
 			Description: value.Description,
 			CreatedAt:   value.CreatedAt,
 			UpdatedAt:   value.UpdatedAt,
-			FeeType:     value.FeeType,
-			Fee:         value.Fee,
-			Type:        value.Type,
 		})
 	}
 
@@ -48,13 +46,13 @@ func (s *service) ReadAllSaleTypeTransactions() ([]ResponseTransaction, error) {
 	return responses, nil
 }
 
-func (s *service) ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTransaction, error) {
+func (s *service) ReadPurchaseTypeById(input *InputReadPurchaseTransaction) (ResponseTransaction, error) {
 
-	query := models.Transaction{
+	query := models.Pengeluaran{
 		ID: input.ID,
 	}
 
-	result, err := s.repo.ReadSaleTypeById(&query)
+	result, err := s.repository.ReadPurchaseTypeById(&query)
 
 	formattedDate := helpers.DateToString(result.Date)
 
@@ -66,9 +64,6 @@ func (s *service) ReadSaleTypeById(input *InputReadSaleTransaction) (ResponseTra
 		Description: result.Description,
 		CreatedAt:   result.CreatedAt,
 		UpdatedAt:   result.UpdatedAt,
-		Fee:         result.Fee,
-		FeeType:     result.FeeType,
-		Type:        result.Type,
 	}
 
 	if err != nil {
