@@ -12,4 +12,5 @@ type Pengeluaran struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	AlreadyPosted uint
+	Purchase      string
 }
