@@ -8,7 +8,8 @@ import (
 )
 
 type Repository interface {
-	DeleteTransactionRepository(input uint, trxType string) error
+	DeletePemasukkan(input *models.Pemasukkan) error
+	DeletePengeluaran(input *models.Pengeluaran) error
 }
 
 type repository struct {
@@ -19,44 +20,38 @@ func NewRepositoryDelete(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) DeleteTransactionRepository(input uint, trxType string) error {
+func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
+	var container models.Pemasukkan
 
-	if trxType == "" {
-		return errors.New("please specify the type")
+	checkTransaction := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container)
+
+	if checkTransaction.RowsAffected < 1 {
+		return errors.New("no data found")
 	}
 
-	if trxType == "Pemasukkan" {
+	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
 
-		var container models.Pemasukkan
-
-		checkTransaction := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container)
-
-		if checkTransaction.RowsAffected < 1 {
-			return errors.New("no data found")
-		}
-
-		deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
-
-		if deleteTransactionId.Error != nil {
-			return deleteTransactionId.Error
-		}
-
-		return nil
-	} else {
-		var container models.Pengeluaran
-
-		checkTransaction := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container)
-
-		if checkTransaction.RowsAffected < 1 {
-			return errors.New("no data found")
-		}
-
-		deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
-
-		if deleteTransactionId.Error != nil {
-			return deleteTransactionId.Error
-		}
-
-		return nil
+	if deleteTransactionId.Error != nil {
+		return deleteTransactionId.Error
 	}
+
+	return nil
+}
+
+func (r *repository) DeletePengeluaran(input *models.Pengeluaran) error {
+	var container models.Pengeluaran
+
+	checkTransaction := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container)
+
+	if checkTransaction.RowsAffected < 1 {
+		return errors.New("no data found")
+	}
+
+	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
+
+	if deleteTransactionId.Error != nil {
+		return deleteTransactionId.Error
+	}
+
+	return nil
 }

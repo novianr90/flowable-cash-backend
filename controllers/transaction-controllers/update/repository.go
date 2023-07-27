@@ -8,7 +8,8 @@ import (
 )
 
 type Repository interface {
-	UpdateTransactionRepository(trxType string, query interface{}) error
+	UpdatePemasukkan(input *models.Pemasukkan) error
+	UpdatePengeluaran(input *models.Pengeluaran) error
 }
 
 type repository struct {
@@ -19,41 +20,30 @@ func NewRepositoryUpdate(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) UpdateTransactionRepository(trxType string, query interface{}) error {
+func (r *repository) UpdatePemasukkan(input *models.Pemasukkan) error {
+	res := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input.ID).Updates(&input)
 
-	if query == nil {
-		return errors.New("there's no data to update")
+	if res.Error != nil {
+		return res.Error
 	}
 
-	if trxType == "Pemasukkan" {
-
-		updatePemasukkan := query.(models.Pemasukkan)
-
-		res := r.db.Model(&models.Pemasukkan{}).Where("id = ?", updatePemasukkan.ID).Updates(updatePemasukkan)
-
-		if res.Error != nil {
-			return res.Error
-		}
-
-		if res.RowsAffected == 0 {
-			return errors.New("error when updating")
-		}
-
-		return nil
-
-	} else {
-		updatePengeluaran := query.(models.Pengeluaran)
-
-		res := r.db.Model(&models.Pengeluaran{}).Where("id = ?", updatePengeluaran.ID).Updates(updatePengeluaran)
-
-		if res.Error != nil {
-			return res.Error
-		}
-
-		if res.RowsAffected == 0 {
-			return errors.New("error when updating")
-		}
-
-		return nil
+	if res.RowsAffected == 0 {
+		return errors.New("error when updating")
 	}
+
+	return nil
+}
+
+func (r *repository) UpdatePengeluaran(input *models.Pengeluaran) error {
+	res := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input.ID).Updates(&input)
+
+	if res.Error != nil {
+		return res.Error
+	}
+
+	if res.RowsAffected == 0 {
+		return errors.New("error when updating")
+	}
+
+	return nil
 }

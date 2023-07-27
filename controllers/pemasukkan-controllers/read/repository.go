@@ -20,15 +20,13 @@ func NewRepositoryRead(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-var typeSale = "Penjualan"
-
 func (r *repository) ReadAllSaleTypeTransactions() (*[]models.Pemasukkan, error) {
 
 	var saleTransactions []models.Pemasukkan
 
 	db := r.db.Model(&models.Pemasukkan{})
 
-	err := db.Where("type = ?", typeSale).Find(&saleTransactions).Error
+	err := db.Find(&saleTransactions).Error
 
 	if err != nil {
 		return &[]models.Pemasukkan{}, err
@@ -43,7 +41,7 @@ func (r *repository) ReadSaleTypeById(input *models.Pemasukkan) (*models.Pemasuk
 
 	db := r.db.Model(&models.Pemasukkan{})
 
-	err := db.Where("type = ?", typeSale).Where("id = ?", input.ID).First(&saleTransaction).Error
+	err := db.Where("id = ?", input.ID).First(&saleTransaction).Error
 
 	if err != nil {
 		return &models.Pemasukkan{}, err
