@@ -29,7 +29,7 @@ func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
 		return errors.New("no data found")
 	}
 
-	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
+	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input).Delete(&container)
 
 	if deleteTransactionId.Error != nil {
 		return deleteTransactionId.Error
@@ -47,7 +47,7 @@ func (r *repository) DeletePengeluaran(input *models.Pengeluaran) error {
 		return errors.New("no data found")
 	}
 
-	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container).Delete(&container)
+	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input).Delete(&container)
 
 	if deleteTransactionId.Error != nil {
 		return deleteTransactionId.Error
