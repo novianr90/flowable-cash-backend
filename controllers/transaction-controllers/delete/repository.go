@@ -23,16 +23,14 @@ func NewRepositoryDelete(db *gorm.DB) *repository {
 func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
 	var container models.Pemasukkan
 
-	checkTransaction := r.db.Model(&models.Pemasukkan{}).Select("*").Where("id = ?", input).Find(&container)
-
-	if checkTransaction.RowsAffected < 1 {
-		return errors.New("no data found")
-	}
-
 	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input).Delete(&container)
 
 	if deleteTransactionId.Error != nil {
 		return deleteTransactionId.Error
+	}
+
+	if deleteTransactionId.RowsAffected == 0 {
+		return errors.New("no data to delete")
 	}
 
 	return nil
@@ -41,16 +39,14 @@ func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
 func (r *repository) DeletePengeluaran(input *models.Pengeluaran) error {
 	var container models.Pengeluaran
 
-	checkTransaction := r.db.Model(&models.Pengeluaran{}).Select("*").Where("id = ?", input).Find(&container)
-
-	if checkTransaction.RowsAffected < 1 {
-		return errors.New("no data found")
-	}
-
 	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input).Delete(&container)
 
 	if deleteTransactionId.Error != nil {
 		return deleteTransactionId.Error
+	}
+
+	if deleteTransactionId.RowsAffected == 0 {
+		return errors.New("no data to delete")
 	}
 
 	return nil
