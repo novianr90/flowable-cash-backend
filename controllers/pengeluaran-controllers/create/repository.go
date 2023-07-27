@@ -20,7 +20,7 @@ func NewRepositoryCreate(db *gorm.DB) *repository {
 
 func (r *repository) CreateTransactionRepository(input *models.Pengeluaran) (*models.Pengeluaran, error) {
 
-	transaction := models.Pengeluaran{
+	query := models.Pengeluaran{
 		Name:          input.Name,
 		Date:          input.Date,
 		Total:         input.Total,
@@ -29,9 +29,9 @@ func (r *repository) CreateTransactionRepository(input *models.Pengeluaran) (*mo
 		AlreadyPosted: 0,
 	}
 
-	if err := r.db.Create(&transaction).Error; err != nil {
+	if err := r.db.Model(&models.Pengeluaran{}).Create(&query).Error; err != nil {
 		return &models.Pengeluaran{}, err
 	}
 
-	return &transaction, nil
+	return &query, nil
 }

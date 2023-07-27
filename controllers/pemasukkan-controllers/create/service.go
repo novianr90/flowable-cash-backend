@@ -21,7 +21,7 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 
 	formattedDate, _ := helpers.StringToDate(input.Date)
 
-	transaction := models.Pengeluaran{
+	pemasukkan := models.Pemasukkan{
 		Name:        input.Name,
 		Date:        formattedDate,
 		Total:       input.Total,
@@ -29,7 +29,7 @@ func (s *service) CreateTransactionService(input *InputCreateTransaction) (Respo
 		Payment:     input.Payment,
 	}
 
-	result, err := s.repo.CreateTransactionRepository(&transaction)
+	result, err := s.repo.CreateTransactionRepository(&pemasukkan)
 
 	date := helpers.DateToString(result.Date)
 
