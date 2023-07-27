@@ -22,7 +22,7 @@ func NewRepositoryDelete(db *gorm.DB) *repository {
 
 func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
 
-	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input).Delete(&models.Pemasukkan{})
+	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input.ID).Delete(&models.Pemasukkan{})
 
 	if deleteTransactionId.Error != nil {
 		return deleteTransactionId.Error
@@ -37,7 +37,7 @@ func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
 
 func (r *repository) DeletePengeluaran(input *models.Pengeluaran) error {
 
-	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input).Delete(&models.Pemasukkan{})
+	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input.ID).Delete(&models.Pemasukkan{})
 
 	if deleteTransactionId.Error != nil {
 		return deleteTransactionId.Error
