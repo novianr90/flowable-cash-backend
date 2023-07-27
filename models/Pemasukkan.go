@@ -12,5 +12,5 @@ type Pemasukkan struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	AlreadyPosted uint
-	Sale          string
+	Sale          int
 }
