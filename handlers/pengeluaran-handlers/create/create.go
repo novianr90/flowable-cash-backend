@@ -31,7 +31,7 @@ func (h *handler) CreatePemasukkan(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{
-		"pemasukkan": res,
-		"status":     "success",
+		"pengeluaran": res,
+		"status":      "success",
 	})
 }

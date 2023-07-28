@@ -24,7 +24,7 @@ func (h *handler) GetPurchaseTransactions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"transaction": result,
+		"pengeluaran": result,
 	})
 }
 
@@ -44,6 +44,6 @@ func (h *handler) GetPurchaseTransactionById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"transaction": result,
+		"pengeluaran": result,
 	})
 }

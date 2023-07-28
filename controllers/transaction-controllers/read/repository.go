@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	ReadAllTransactions() (*[]models.Pemasukkan, *[]models.Pengeluaran, error)
+	ReadAllTransactions() (*[]models.Pengeluaran, *[]models.Pemasukkan, error)
 }
 
 type repository struct {
@@ -18,21 +18,21 @@ func NewRepositoryRead(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) ReadAllTransactions() (*[]models.Pemasukkan, *[]models.Pengeluaran, error) {
+func (r *repository) ReadAllTransactions() (*[]models.Pengeluaran, *[]models.Pemasukkan, error) {
 	var pengeluaran []models.Pengeluaran
 	var pemasukkan []models.Pemasukkan
 
 	err := r.db.Find(&pengeluaran).Error
 
 	if err != nil {
-		return &[]models.Pemasukkan{}, &[]models.Pengeluaran{}, err
+		return &[]models.Pengeluaran{}, &[]models.Pemasukkan{}, err
 	}
 
 	err = r.db.Find(&pemasukkan).Error
 
 	if err != nil {
-		return &[]models.Pemasukkan{}, &[]models.Pengeluaran{}, err
+		return &[]models.Pengeluaran{}, &[]models.Pemasukkan{}, err
 	}
 
-	return &pemasukkan, &pengeluaran, nil
+	return &pengeluaran, &pemasukkan, nil
 }
