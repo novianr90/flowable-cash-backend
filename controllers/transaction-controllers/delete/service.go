@@ -1,9 +1,12 @@
 package deleteTransaction
 
-import "flowable-cash-backend/models"
+import (
+	"errors"
+	"flowable-cash-backend/models"
+)
 
 type Service interface {
-	DeleteTransactionService(input *InputDeleteTransaction) (*models.Transaction, error)
+	DeleteTransactionService(input *InputDeleteTransaction) error
 }
 
 type service struct {
@@ -14,16 +17,27 @@ func NewDeleteService(repository Repository) *service {
 	return &service{repo: repository}
 }
 
-func (s *service) DeleteTransactionService(input *InputDeleteTransaction) (*models.Transaction, error) {
-	transaction := models.Transaction{
-		ID: input.ID,
-	}
+func (s *service) DeleteTransactionService(input *InputDeleteTransaction) error {
 
-	result, err := s.repo.DeleteTransactionRepository(&transaction)
+	var err error
+
+	switch {
+
+	case input.Type == "Pemasukkan":
+		queryPemasukkan := models.Pemasukkan{ID: input.ID}
+		err = s.repo.DeletePemasukkan(&queryPemasukkan)
+
+	case input.Type == "Pengeluaran":
+		queryPengeluaran := models.Pengeluaran{ID: input.ID}
+		err = s.repo.DeletePengeluaran(&queryPengeluaran)
+
+	default:
+		return errors.New("specify transaction type")
+	}
 
 	if err != nil {
-		return &models.Transaction{}, err
+		return err
 	}
 
-	return result, nil
+	return nil
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	CreateTransactionRepository(input *models.Transaction) (*models.Transaction, error)
+	CreateTransactionRepository(input *models.Pemasukkan) (*models.Pemasukkan, error)
 }
 
 type repository struct {
@@ -18,22 +18,19 @@ func NewRepositoryCreate(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) CreateTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
+func (r *repository) CreateTransactionRepository(input *models.Pemasukkan) (*models.Pemasukkan, error) {
 
-	transaction := models.Transaction{
+	transaction := models.Pemasukkan{
 		Name:          input.Name,
 		Date:          input.Date,
-		Type:          input.Type,
 		Total:         input.Total,
 		Description:   input.Description,
 		Payment:       input.Payment,
-		FeeType:       input.FeeType,
-		Fee:           input.Fee,
 		AlreadyPosted: 0,
 	}
 
-	if err := r.db.Create(&transaction).Error; err != nil {
-		return &models.Transaction{}, err
+	if err := r.db.Model(&models.Pemasukkan{}).Create(&transaction).Error; err != nil {
+		return &models.Pemasukkan{}, err
 	}
 
 	return &transaction, nil

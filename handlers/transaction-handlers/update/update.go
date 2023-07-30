@@ -23,7 +23,7 @@ func (h *handler) UpdateTransaction(c *gin.Context) {
 		return
 	}
 
-	result, err := h.service.UpdateTransactionService(&input)
+	err := h.service.UpdateTransactionService(&input)
 
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
@@ -31,7 +31,7 @@ func (h *handler) UpdateTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "Transaction sucessfully updated",
-		"transaction": result,
+		"message": "Transaction sucessfully updated",
+		"status":  "success",
 	})
 }

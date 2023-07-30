@@ -23,7 +23,7 @@ func (h *handler) DeleteTransaction(c *gin.Context) {
 		return
 	}
 
-	result, err := h.service.DeleteTransactionService(&input)
+	err := h.service.DeleteTransactionService(&input)
 
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
@@ -31,7 +31,7 @@ func (h *handler) DeleteTransaction(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "Transaction sucessfully deleted",
-		"transaction": result,
+		"message": "Transaction sucessfully deleted",
+		"status":  "success",
 	})
 }

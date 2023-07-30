@@ -1,13 +1,15 @@
 package updateTransaction
 
 import (
+	"errors"
 	"flowable-cash-backend/models"
 
 	"gorm.io/gorm"
 )
 
 type Repository interface {
-	UpdateTransactionRepository(input *models.Transaction) (*models.Transaction, error)
+	UpdatePemasukkan(input *models.Pemasukkan) error
+	UpdatePengeluaran(input *models.Pengeluaran) error
 }
 
 type repository struct {
@@ -18,34 +20,30 @@ func NewRepositoryUpdate(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) UpdateTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
+func (r *repository) UpdatePemasukkan(input *models.Pemasukkan) error {
+	res := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input.ID).Updates(&input)
 
-	var transaction models.Transaction
-
-	db := r.db.Model(models.Transaction{})
-
-	newTransaction := models.Transaction{
-		Name:          input.Name,
-		Date:          input.Date,
-		Type:          input.Type,
-		Total:         input.Total,
-		FeeType:       input.FeeType,
-		Fee:           input.Fee,
-		Description:   input.Description,
-		AlreadyPosted: input.AlreadyPosted,
+	if res.Error != nil {
+		return res.Error
 	}
 
-	updateTransaction := db.Where("id = ?", input.ID).Updates(&newTransaction)
-
-	if updateTransaction.RowsAffected == 0 {
-		return &models.Transaction{}, updateTransaction.Error
+	if res.RowsAffected == 0 {
+		return errors.New("error when updating")
 	}
 
-	if updateTransaction.Error != nil {
-		return &models.Transaction{}, updateTransaction.Error
+	return nil
+}
+
+func (r *repository) UpdatePengeluaran(input *models.Pengeluaran) error {
+	res := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input.ID).Updates(&input)
+
+	if res.Error != nil {
+		return res.Error
 	}
 
-	_ = db.Where("id = ?", input.ID).First(&transaction)
+	if res.RowsAffected == 0 {
+		return errors.New("error when updating")
+	}
 
-	return &transaction, nil
+	return nil
 }

@@ -8,7 +8,8 @@ import (
 )
 
 type Repository interface {
-	DeleteTransactionRepository(input *models.Transaction) (*models.Transaction, error)
+	DeletePemasukkan(input *models.Pemasukkan) error
+	DeletePengeluaran(input *models.Pengeluaran) error
 }
 
 type repository struct {
@@ -19,23 +20,32 @@ func NewRepositoryDelete(db *gorm.DB) *repository {
 	return &repository{db: db}
 }
 
-func (r *repository) DeleteTransactionRepository(input *models.Transaction) (*models.Transaction, error) {
+func (r *repository) DeletePemasukkan(input *models.Pemasukkan) error {
 
-	var transactionModel models.Transaction
+	deleteTransactionId := r.db.Model(&models.Pemasukkan{}).Where("id = ?", input.ID).Delete(&models.Pemasukkan{})
 
-	db := r.db.Model(&transactionModel)
-
-	checkTransaction := db.Select("*").Where("id = ?", input.ID).Find(&transactionModel)
-
-	if checkTransaction.RowsAffected < 1 {
-		return &transactionModel, errors.New("no data found")
+	if deleteTransactionId.Error != nil {
+		return deleteTransactionId.Error
 	}
 
-	deleteStudentId := db.Select("*").Where("id = ?", input.ID).Find(&transactionModel).Delete(&transactionModel)
-
-	if deleteStudentId.Error != nil {
-		return &transactionModel, deleteStudentId.Error
+	if deleteTransactionId.RowsAffected == 0 {
+		return errors.New("no data to delete")
 	}
 
-	return &transactionModel, nil
+	return nil
+}
+
+func (r *repository) DeletePengeluaran(input *models.Pengeluaran) error {
+
+	deleteTransactionId := r.db.Model(&models.Pengeluaran{}).Where("id = ?", input.ID).Delete(&models.Pemasukkan{})
+
+	if deleteTransactionId.Error != nil {
+		return deleteTransactionId.Error
+	}
+
+	if deleteTransactionId.RowsAffected == 0 {
+		return errors.New("no data to delete")
+	}
+
+	return nil
 }

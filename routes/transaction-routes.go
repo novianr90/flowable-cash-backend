@@ -1,12 +1,10 @@
 package routes
 
 import (
-	createTransaction "flowable-cash-backend/controllers/transaction-controllers/create"
 	deleteTransaction "flowable-cash-backend/controllers/transaction-controllers/delete"
 	readTransaction "flowable-cash-backend/controllers/transaction-controllers/read"
 	updateTransaction "flowable-cash-backend/controllers/transaction-controllers/update"
 
-	handlerCreate "flowable-cash-backend/handlers/transaction-handlers/create"
 	handlerDelete "flowable-cash-backend/handlers/transaction-handlers/delete"
 	handlerRead "flowable-cash-backend/handlers/transaction-handlers/read"
 	handlerUpdate "flowable-cash-backend/handlers/transaction-handlers/update"
@@ -17,10 +15,6 @@ import (
 )
 
 func InitTransactionRoutes(db *gorm.DB, route *gin.RouterGroup) {
-	// Create
-	createRepository := createTransaction.NewRepositoryCreate(db)
-	createService := createTransaction.NewServiceCreate(createRepository)
-	createHandler := handlerCreate.NewHandlerCreateTransaction(createService)
 
 	//Delete
 	deleteRepository := deleteTransaction.NewRepositoryDelete(db)
@@ -39,16 +33,10 @@ func InitTransactionRoutes(db *gorm.DB, route *gin.RouterGroup) {
 
 	groupRoute := route.Group("/transactions")
 
-	groupRoute.POST("", createHandler.CreateTransaction)
-
 	groupRoute.DELETE("", deleteHandler.DeleteTransaction)
 
 	// All transactions
 	groupRoute.GET("", readHandler.GetAllTransactions)
-	groupRoute.GET("/", readHandler.GetTransactionById)
-
-	// All Transactions By Type
-	groupRoute.GET("/type", readHandler.GetAllTransactionsByType)
 
 	groupRoute.PUT("", updateHandler.UpdateTransaction)
 }

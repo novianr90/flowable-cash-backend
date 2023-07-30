@@ -1,7 +1,7 @@
 package handlerReadPurchase
 
 import (
-	readPurchase "flowable-cash-backend/controllers/purchase-controllers/read"
+	readPurchase "flowable-cash-backend/controllers/pengeluaran-controllers/read"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func (h *handler) GetPurchaseTransactions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"transaction": result,
+		"pengeluaran": result,
 	})
 }
 
@@ -44,6 +44,6 @@ func (h *handler) GetPurchaseTransactionById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"transaction": result,
+		"pengeluaran": result,
 	})
 }

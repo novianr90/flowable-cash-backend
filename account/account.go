@@ -2,23 +2,26 @@ package account
 
 const (
 	// Asset
-	AsetLancar             = "1-1000"
-	Kas                    = "1-1100"
-	PersediaanBarangDagang = "1-1200"
+	AsetLancar    = "1-1000"
+	Kas           = "1-1100"
+	BahanBaku     = "1-1200"
+	BarangDagang  = "1-1300"
+	BahanTambahan = "1-1400"
+	PiutangDagang = "1-1500"
 
 	// Aset Tetap
-	AsetTetap                       = "1-2000"
-	Perlengkapan                    = "1-2100"
-	AkumulasiPenyusutanPerlengkapan = "1-2101"
+	AsetTetap                    = "1-2000"
+	Peralatan                    = "1-2100"
+	AkumulasiPenyusutanPeralatan = "1-2101"
+	Kendaraan                    = "1-2200"
+	AkumulasiPenyusutanKendaraan = "1-2201"
 
 	//Liabilitas (Kewajiban)
-	HutangDagang  = "2-1000"
-	PiutangDagang = "2-2000"
+	HutangDagang = "2-1000"
 
 	// Ekuitas (Modal)
-	ModalOwner  = "3-1000"
-	LabaDitahan = "3-2000"
-	Prive       = "3-3000"
+	ModalOwner = "3-1000"
+	Prive      = "3-2000"
 
 	// Pendapatan (Laba)
 	Penjualan = "4-1000"
