@@ -159,7 +159,7 @@ func (u *usecase) PostingPemasukkan() error {
 
 	for i := range transactions {
 		transactions[i].AlreadyPosted = 1
-		if err := u.db.Model(&transactions[i]).Where("name = ?", "Pendapatan").Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&transactions[i]).Updates(&transactions).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -299,7 +299,7 @@ func (u *usecase) PostingBahanBaku() error {
 
 	for i := range pengeluarans {
 		pengeluarans[i].AlreadyPosted = 1
-		if err := u.db.Model(&pengeluarans[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&pengeluarans[i]).Updates(&pengeluarans).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -450,7 +450,7 @@ func (u *usecase) PostingBarangDagang() error {
 
 	for i := range pengeluarans {
 		pengeluarans[i].AlreadyPosted = 1
-		if err := u.db.Model(&pengeluarans[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&pengeluarans[i]).Updates(&pengeluarans).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -594,7 +594,7 @@ func (u *usecase) PostingBahanTambahan() error {
 
 	for i := range pengeluarans {
 		pengeluarans[i].AlreadyPosted = 1
-		if err := u.db.Model(&pengeluarans[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&pengeluarans[i]).Updates(&pengeluarans).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -745,7 +745,7 @@ func (u *usecase) PostingPeralatan() error {
 
 	for i := range pengeluarans {
 		pengeluarans[i].AlreadyPosted = 1
-		if err := u.db.Model(&pengeluarans[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&pengeluarans[i]).Updates(&pengeluarans).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -867,7 +867,7 @@ func (u *usecase) PostingBayarHutang() error {
 
 	for i := range pengeluarans {
 		pengeluarans[i].AlreadyPosted = 1
-		if err := u.db.Model(&pengeluarans[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&pengeluarans[i]).Updates(&pengeluarans).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -988,7 +988,7 @@ func (u *usecase) PostingBayarPiutang() error {
 
 	for i := range pemasukkan {
 		pemasukkan[i].AlreadyPosted = 1
-		if err := u.db.Model(&pemasukkan[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&pemasukkan[i]).Updates(&pemasukkan).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -1114,7 +1114,7 @@ func (u *usecase) PostingBiayaBiaya() error {
 
 	for i := range filteredPengeluaran {
 		filteredPengeluaran[i].AlreadyPosted = 1
-		if err := u.db.Model(&filteredPengeluaran[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&filteredPengeluaran[i]).Updates(&filteredPengeluaran).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}

@@ -37,7 +37,7 @@ func PostingUseCase(db *gorm.DB) {
 	useCaseService := usecase.NewUseCaseService(db)
 
 	// Pemasukkan
-	_, err := c.AddFunc("@every 30m", func() {
+	_, err := c.AddFunc("@every 5m", func() {
 		err := useCaseService.PostingPemasukkan()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -49,7 +49,7 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Bahan Baku
-	_, err = c.AddFunc("@every 30m", func() {
+	_, err = c.AddFunc("@every 6m", func() {
 		err := useCaseService.PostingBahanBaku()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -61,7 +61,7 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Barang Dagang
-	_, err = c.AddFunc("@every 30m", func() {
+	_, err = c.AddFunc("@every 7m", func() {
 		err := useCaseService.PostingBarangDagang()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -73,7 +73,7 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Bahan Tambahan
-	_, err = c.AddFunc("@every 30m", func() {
+	_, err = c.AddFunc("@every 8m", func() {
 		err := useCaseService.PostingBahanTambahan()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -85,7 +85,7 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Peralatan
-	_, err = c.AddFunc("@every 30m", func() {
+	_, err = c.AddFunc("@every 9m", func() {
 		err := useCaseService.PostingPeralatan()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -97,7 +97,7 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Hutang
-	_, err = c.AddFunc("@every 30m", func() {
+	_, err = c.AddFunc("@every 10m", func() {
 		err := useCaseService.PostingBayarHutang()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -109,7 +109,7 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Piutang
-	_, err = c.AddFunc("@every 30m", func() {
+	_, err = c.AddFunc("@every 11m", func() {
 		err := useCaseService.PostingBayarPiutang()
 		if err != nil {
 			log.Println("Error when posting:", err)
@@ -121,6 +121,16 @@ func PostingUseCase(db *gorm.DB) {
 	}
 
 	// Biaya
+	_, err = c.AddFunc("@every 12m", func() {
+		err := useCaseService.PostingBiayaBiaya()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
+
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
 
 	// Currently not implemented, still search how to balance if add this
 
