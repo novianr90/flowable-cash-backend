@@ -8,23 +8,35 @@ func AccountNoDecider(value string) string {
 	case "Kas":
 		return account.Kas
 
-	case "Persediaan Barang Dagang":
-		return account.PersediaanBarangDagang
+	case "Bahan Baku":
+		return account.BahanBaku
 
-	case "Perlengkapan":
-		return account.Perlengkapan
+	case "Barang Dagang":
+		return account.BarangDagang
 
-	case "Akumulasi Penyusutan Perlengkapan":
-		return account.AkumulasiPenyusutanPerlengkapan
+	case "Bahan Tambahan":
+		return account.BahanTambahan
+
+	case "Piutang Dagang":
+		return account.PiutangDagang
+
+	case "Peralatan":
+		return account.Peralatan
+
+	case "Akumulasi Penyusutan Peralatan":
+		return account.AkumulasiPenyusutanPeralatan
+
+	case "Kendaraan":
+		return account.Kendaraan
+
+	case "Akumulasi Penyusutan Kendaraan":
+		return account.AkumulasiPenyusutanKendaraan
 
 	case "Hutang Dagang":
 		return account.HutangDagang
 
 	case "Modal":
 		return account.ModalOwner
-
-	case "Laba Disimpan":
-		return account.LabaDitahan
 
 	case "Mengambil Laba":
 		return account.Prive
@@ -46,9 +58,6 @@ func AccountNoDecider(value string) string {
 
 	case "Pembelian":
 		return account.Pembelian
-
-	case "Piutang Dagang":
-		return account.PiutangDagang
 	}
 
 	return ""

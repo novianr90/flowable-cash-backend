@@ -27,17 +27,18 @@ func main() {
 
 	app := SetupRouter(db)
 
-	go PostingPenjualanScheduler(db)
+	go PostingUseCase(db)
 
 	app.Run(":" + PORT)
 }
 
-func PostingPenjualanScheduler(db *gorm.DB) {
+func PostingUseCase(db *gorm.DB) {
 
 	useCaseService := usecase.NewUseCaseService(db)
 
-	_, err := c.AddFunc("@every 5m", func() {
-		err := useCaseService.PostingPenjualan()
+	// Pemasukkan
+	_, err := c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingPemasukkan()
 		if err != nil {
 			log.Println("Error when posting:", err)
 		}
@@ -47,18 +48,81 @@ func PostingPenjualanScheduler(db *gorm.DB) {
 		log.Println("Error when do job:", err)
 	}
 
-	// Pengeluaran will be much, so it will not based on this 1 method, will be more
+	// Bahan Baku
+	_, err = c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingBahanBaku()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
 
-	// _, err = c.AddFunc("@every 5m", func() {
-	// 	err := useCaseService.PostingPembelian()
-	// 	if err != nil {
-	// 		log.Println("Error when posting:", err)
-	// 	}
-	// })
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
 
-	// if err != nil {
-	// 	log.Println("Error when do job:", err)
-	// }
+	// Barang Dagang
+	_, err = c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingBarangDagang()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
+
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
+
+	// Bahan Tambahan
+	_, err = c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingBahanTambahan()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
+
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
+
+	// Peralatan
+	_, err = c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingPeralatan()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
+
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
+
+	// Hutang
+	_, err = c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingBayarHutang()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
+
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
+
+	// Piutang
+	_, err = c.AddFunc("@every 30m", func() {
+		err := useCaseService.PostingBayarPiutang()
+		if err != nil {
+			log.Println("Error when posting:", err)
+		}
+	})
+
+	if err != nil {
+		log.Println("Error when do job:", err)
+	}
+
+	// Biaya
+
+	// Currently not implemented, still search how to balance if add this
 
 	c.Start()
 

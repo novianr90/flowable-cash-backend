@@ -12,7 +12,14 @@ import (
 )
 
 type UseCase interface {
-	PostingPemasukan() error
+	PostingPemasukkan() error
+	PostingBahanBaku() error
+	PostingBarangDagang() error
+	PostingBahanTambahan() error
+	PostingPeralatan() error
+	PostingBayarHutang() error
+	PostingBayarPiutang() error
+	PostingBiayaBiaya() error
 }
 
 type usecase struct {
@@ -23,12 +30,13 @@ func NewUseCaseService(db *gorm.DB) *usecase {
 	return &usecase{db: db}
 }
 
-func (u *usecase) PostingPenjualan() error {
+func (u *usecase) PostingPemasukkan() error {
 
 	var transactions []models.Pemasukkan
 
 	if err := u.db.
 		Where("already_posted = ?", 0).
+		Where("name = ?", "Pendapatan").
 		Find(&transactions).Error; err != nil {
 		return err
 	}
@@ -150,7 +158,7 @@ func (u *usecase) PostingPenjualan() error {
 
 	for i := range transactions {
 		transactions[i].AlreadyPosted = 1
-		if err := u.db.Model(&transactions[i]).Update("already_posted", 1).Error; err != nil {
+		if err := u.db.Model(&transactions[i]).Where("name = ?", "Pendapatan").Update("already_posted", 1).Error; err != nil {
 			log.Println("Error Updating Transactions:", err)
 			continue
 		}
@@ -160,165 +168,770 @@ func (u *usecase) PostingPenjualan() error {
 	return nil
 }
 
-// func (u *usecase) PostingPengeluaran() error {
-// 	var transactions []models.Pengeluaran
+func (u *usecase) PostingBahanBaku() error {
+	var pengeluarans []models.Pengeluaran
 
-// 	if err := u.db.
-// 		Where("already_posted = ?", 0).
-// 		Find(&transactions).Error; err != nil {
-// 		return err
-// 	}
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("already_posted = ?", 0).
+		Where("name = ?", "Bahan Baku").
+		Find(&pengeluarans).Error; err != nil {
+		return err
+	}
 
-// 	var kas models.BalanceSheet
-// 	if err := u.db.
-// 		Where("month = ?", time.Now().Month()).
-// 		Where("account_name = ?", "Kas").
-// 		First(&kas).Error; err != nil {
-// 		return err
-// 	}
+	if pengeluarans == nil {
+		return errors.New("no remaining data to posting")
+	}
 
-// 	var pembelian models.BalanceSheet
-// 	if err := u.db.
-// 		Where("month = ?", time.Now().Month()).
-// 		Where("account_name = ?", "Pembelian").
-// 		First(&pembelian).Error; err != nil {
-// 		return err
-// 	}
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
 
-// 	var persediaan models.BalanceSheet
-// 	if err := u.db.
-// 		Where("month = ?", time.Now().Month()).
-// 		Where("account_name = ?", "Persediaan Barang Dagang").
-// 		First(&persediaan).Error; err != nil {
-// 		return err
-// 	}
+	var hutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		First(&hutang).Error; err != nil {
+		return err
+	}
 
-// 	var hutang models.BalanceSheet
-// 	if err := u.db.
-// 		Where("month = ?", time.Now().Month()).
-// 		Where("account_name = ?", "Hutang Dagang").
-// 		First(&hutang).Error; err != nil {
-// 		return err
-// 	}
+	var bahanBaku models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Bahan Baku").
+		First(&bahanBaku).Error; err != nil {
+		return err
+	}
 
-// 	totalPembelianCash := 0.0
-// 	totalPembelianNonCash := 0.0
+	var kasBalance models.Balance
+	var hutangBalance models.Balance
+	var bahanBakuBalance models.Balance
 
-// 	for _, value := range transactions {
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
+	_ = json.Unmarshal(bahanBaku.Balance, &bahanBakuBalance)
 
-// 		if value.Payment == "Tunai" {
-// 			totalPembelianCash += float64(value.Total)
-// 		}
+	totalCash := 0.0
+	totalNonCash := 0.0
 
-// 		if value.Payment == "Non-Tunai" {
-// 			totalPembelianNonCash += float64(value.Total)
-// 		}
-// 	}
+	for _, value := range pengeluarans {
+		if value.Payment == "Tunai" {
+			totalCash += float64(value.Total)
+		} else {
+			totalNonCash += float64(value.Total)
+		}
+	}
 
-// 	totalPembelian := totalPembelianCash + totalPembelianNonCash
+	totalKas := kasBalance.Debit - totalCash
+	totalBahanBaku := totalCash + totalNonCash
 
-// 	var kasBalanceInDb models.Balance
-// 	var pembelianBalanceInDb models.Balance
-// 	var hutangBalanceInDb models.Balance
-// 	var persediaanBalanceInDb models.Balance
+	totalCashBalanceRaw := models.Balance{
+		Debit:  totalKas,
+		Credit: 0,
+	}
 
-// 	err := json.Unmarshal(kas.Balance, &kasBalanceInDb)
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  0,
+		Credit: hutangBalance.Credit + totalNonCash,
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	totalRaw := models.Balance{
+		Debit:  bahanBakuBalance.Debit + totalBahanBaku,
+		Credit: 0,
+	}
 
-// 	err = json.Unmarshal(pembelian.Balance, &pembelianBalanceInDb)
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+	totalFormatted, _ := json.Marshal(&totalRaw)
 
-// 	if err != nil {
-// 		return err
-// 	}
+	kas.Balance = cashFormatted
+	hutang.Balance = nonCashFormatted
+	bahanBaku.Balance = totalFormatted
 
-// 	err = json.Unmarshal(hutang.Balance, &hutangBalanceInDb)
+	for _, value := range pengeluarans {
+		value.AlreadyPosted = 1
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
 
-// 	err = json.Unmarshal(persediaan.Balance, &persediaanBalanceInDb)
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		Save(&hutang).Error; err != nil {
+		return err
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Bahan Baku").
+		Save(&bahanBaku).Error; err != nil {
+		return err
+	}
 
-// 	newKas := models.Balance{
-// 		Debit:  kasBalanceInDb.Debit - totalPembelianCash,
-// 		Credit: kasBalanceInDb.Credit,
-// 	}
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("name = ?", "Bahan Baku").
+		Save(&pengeluarans).Error; err != nil {
+		return err
+	}
 
-// 	newPembelian := models.Balance{
-// 		Debit:  pembelianBalanceInDb.Debit + totalPembelian,
-// 		Credit: pembelianBalanceInDb.Credit,
-// 	}
+	log.Println("Posting Bahan Baku Complete!")
 
-// 	newHutang := models.Balance{
-// 		Debit:  hutangBalanceInDb.Debit,
-// 		Credit: hutangBalanceInDb.Credit + totalPembelianNonCash,
-// 	}
+	return nil
+}
 
-// 	newPersediaan := models.Balance{
-// 		Debit:  persediaanBalanceInDb.Debit + totalPembelian,
-// 		Credit: persediaanBalanceInDb.Credit,
-// 	}
+func (u *usecase) PostingBarangDagang() error {
+	var pengeluarans []models.Pengeluaran
 
-// 	kasFormatted, err := json.Marshal(&newKas)
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("already_posted = ?", 0).
+		Where("name = ?", "Barang Dagang").
+		Find(&pengeluarans).Error; err != nil {
+		return err
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	if pengeluarans == nil {
+		return errors.New("no remaining data to posting")
+	}
 
-// 	pembelianFormatted, err := json.Marshal(&newPembelian)
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	var hutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		First(&hutang).Error; err != nil {
+		return err
+	}
 
-// 	hutangFormatted, err := json.Marshal(&newHutang)
+	var barangDagang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Barang Dagang").
+		First(&barangDagang).Error; err != nil {
+		return err
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	var kasBalance models.Balance
+	var hutangBalance models.Balance
+	var barangDagangBalance models.Balance
 
-// 	persediaanFormatted, err := json.Marshal(&newPersediaan)
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
+	_ = json.Unmarshal(barangDagang.Balance, &barangDagangBalance)
 
-// 	if err != nil {
-// 		return err
-// 	}
+	totalCash := 0.0
+	totalNonCash := 0.0
 
-// 	kas.Balance = kasFormatted
-// 	pembelian.Balance = pembelianFormatted
-// 	hutang.Balance = hutangFormatted
-// 	persediaan.Balance = persediaanFormatted
+	for _, value := range pengeluarans {
+		if value.Payment == "Tunai" {
+			totalCash += float64(value.Total)
+		} else {
+			totalNonCash += float64(value.Total)
+		}
+	}
 
-// 	if err := u.db.Save(&kas).Error; err != nil {
-// 		return err
-// 	}
+	totalBarangDagang := totalCash + totalNonCash
 
-// 	if err := u.db.Save(&pembelian).Error; err != nil {
-// 		return err
-// 	}
+	totalCashBalanceRaw := models.Balance{
+		Debit:  kasBalance.Debit - totalCash,
+		Credit: 0,
+	}
 
-// 	if err := u.db.Save(&hutang).Error; err != nil {
-// 		return err
-// 	}
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  0,
+		Credit: hutangBalance.Credit + totalNonCash,
+	}
 
-// 	if err := u.db.Save(&persediaan).Error; err != nil {
-// 		return err
-// 	}
+	totalRaw := models.Balance{
+		Debit:  barangDagangBalance.Debit + totalBarangDagang,
+		Credit: 0,
+	}
 
-// 	for i := range transactions {
-// 		transactions[i].AlreadyPosted = 1
-// 		if err := u.db.Model(&transactions[i]).Update("already_posted", 1).Error; err != nil {
-// 			log.Println("Error Updating Transactions:", err)
-// 			continue
-// 		}
-// 	}
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+	totalFormatted, _ := json.Marshal(&totalRaw)
 
-// 	fmt.Println("Posting Completed!")
-// 	return nil
-// }
+	kas.Balance = cashFormatted
+	hutang.Balance = nonCashFormatted
+	barangDagang.Balance = totalFormatted
+
+	for _, value := range pengeluarans {
+		value.AlreadyPosted = 1
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		Save(&hutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Barang Dagang").
+		Save(&barangDagang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("name = ?", "Barang Dagang").
+		Save(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	log.Println("Posting Barang Dagang Complete!")
+
+	return nil
+}
+
+func (u *usecase) PostingBahanTambahan() error {
+	var pengeluarans []models.Pengeluaran
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("already_posted = ?", 0).
+		Where("name = ?", "Bahan Tambahan").
+		Find(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	if pengeluarans == nil {
+		return errors.New("no remaining data to posting")
+	}
+
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
+
+	var hutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		First(&hutang).Error; err != nil {
+		return err
+	}
+
+	var bahanTambahan models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Bahan Tambahan").
+		First(&bahanTambahan).Error; err != nil {
+		return err
+	}
+
+	var kasBalance models.Balance
+	var hutangBalance models.Balance
+	var bahanTambahanBalance models.Balance
+
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
+	_ = json.Unmarshal(bahanTambahan.Balance, &bahanTambahanBalance)
+
+	totalCash := 0.0
+	totalNonCash := 0.0
+
+	for _, value := range pengeluarans {
+		if value.Payment == "Tunai" {
+			totalCash += float64(value.Total)
+		} else {
+			totalNonCash += float64(value.Total)
+		}
+	}
+
+	totalBahanTambahan := totalCash + totalNonCash
+
+	totalCashBalanceRaw := models.Balance{
+		Debit:  kasBalance.Debit - totalCash,
+		Credit: 0,
+	}
+
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  0,
+		Credit: hutangBalance.Credit + totalNonCash,
+	}
+
+	totalRaw := models.Balance{
+		Debit:  bahanTambahanBalance.Debit + totalBahanTambahan,
+		Credit: 0,
+	}
+
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+	totalFormatted, _ := json.Marshal(&totalRaw)
+
+	kas.Balance = cashFormatted
+	hutang.Balance = nonCashFormatted
+	bahanTambahan.Balance = totalFormatted
+
+	for _, value := range pengeluarans {
+		value.AlreadyPosted = 1
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		Save(&hutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Bahan Tambahan").
+		Save(&bahanTambahan).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("name = ?", "Bahan Tambahan").
+		Save(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	log.Println("Posting Bahan Tambahan Complete!")
+
+	return nil
+}
+
+func (u *usecase) PostingPeralatan() error {
+	var pengeluarans []models.Pengeluaran
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("already_posted = ?", 0).
+		Where("name = ?", "Pengeluaran untuk Pembelian Alat Usaha").
+		Find(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	if pengeluarans == nil {
+		return errors.New("no remaining data to posting")
+	}
+
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
+
+	var hutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		First(&hutang).Error; err != nil {
+		return err
+	}
+
+	var peralatan models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Peralatan").
+		First(&peralatan).Error; err != nil {
+		return err
+	}
+
+	var kasBalance models.Balance
+	var hutangBalance models.Balance
+	var peralatanBalance models.Balance
+
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
+	_ = json.Unmarshal(peralatan.Balance, &peralatanBalance)
+
+	totalCash := 0.0
+	totalNonCash := 0.0
+
+	for _, value := range pengeluarans {
+		if value.Payment == "Tunai" {
+			totalCash += float64(value.Total)
+		} else {
+			totalNonCash += float64(value.Total)
+		}
+	}
+
+	totalPeralatan := totalCash + totalNonCash
+
+	totalCashBalanceRaw := models.Balance{
+		Debit:  kasBalance.Debit - totalCash,
+		Credit: 0,
+	}
+
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  0,
+		Credit: hutangBalance.Credit + totalNonCash,
+	}
+
+	totalRaw := models.Balance{
+		Debit:  peralatanBalance.Debit + totalPeralatan,
+		Credit: 0,
+	}
+
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+	totalFormatted, _ := json.Marshal(&totalRaw)
+
+	kas.Balance = cashFormatted
+	hutang.Balance = nonCashFormatted
+	peralatan.Balance = totalFormatted
+
+	for _, value := range pengeluarans {
+		value.AlreadyPosted = 1
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		Save(&hutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Peralatan").
+		Save(&peralatan).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("name = ?", "Pengeluaran untuk Pembelian Alat Usaha").
+		Save(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	log.Println("Posting Peralatan Complete!")
+
+	return nil
+}
+
+func (u *usecase) PostingBayarHutang() error {
+	var pengeluarans []models.Pengeluaran
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("already_posted = ?", 0).
+		Where("name = ?", "Membayar Hutang").
+		Find(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	if pengeluarans == nil {
+		return errors.New("no remaining data to posting")
+	}
+
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
+
+	var hutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		First(&hutang).Error; err != nil {
+		return err
+	}
+
+	var kasBalance models.Balance
+	var hutangBalance models.Balance
+
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
+
+	total := 0.0
+
+	for _, value := range pengeluarans {
+		if value.Payment == "Tunai" {
+			total += float64(value.Total)
+		}
+	}
+
+	totalCashBalanceRaw := models.Balance{
+		Debit:  kasBalance.Debit - total,
+		Credit: 0,
+	}
+
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  0,
+		Credit: hutangBalance.Credit - total,
+	}
+
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+
+	kas.Balance = cashFormatted
+	hutang.Balance = nonCashFormatted
+
+	for _, value := range pengeluarans {
+		value.AlreadyPosted = 1
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		Save(&hutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("name = ?", "Membayar Hutang").
+		Save(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	log.Println("Posting Hutang Complete!")
+
+	return nil
+}
+
+func (u *usecase) PostingBayarPiutang() error {
+	var pemasukkan []models.Pemasukkan
+
+	if err := u.db.Model(&models.Pemasukkan{}).
+		Where("already_posted = ?", 0).
+		Where("name = ?", "Pembayaran Piutang").
+		Find(&pemasukkan).Error; err != nil {
+		return err
+	}
+
+	if pemasukkan == nil {
+		return errors.New("no remaining data to posting")
+	}
+
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
+
+	var piutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Piutang Dagang").
+		First(&piutang).Error; err != nil {
+		return err
+	}
+
+	var kasBalance models.Balance
+	var piutangBalance models.Balance
+
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(piutang.Balance, &piutangBalance)
+
+	total := 0.0
+
+	for _, value := range pemasukkan {
+		if value.Payment == "Tunai" {
+			total += float64(value.Total)
+		}
+	}
+
+	totalCashBalanceRaw := models.Balance{
+		Debit:  kasBalance.Debit + total,
+		Credit: 0,
+	}
+
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  piutangBalance.Debit - total,
+		Credit: 0,
+	}
+
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+
+	kas.Balance = cashFormatted
+	piutang.Balance = nonCashFormatted
+
+	for _, value := range pemasukkan {
+		value.AlreadyPosted = 1
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Piutang Dagang").
+		Save(&piutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.Pemasukkan{}).
+		Where("name = ?", "Pembayaran Piutang").
+		Save(&pemasukkan).Error; err != nil {
+		return err
+	}
+
+	log.Println("Posting Piutang Complete!")
+
+	return nil
+}
+
+func (u *usecase) PostingBiayaBiaya() error {
+	var pengeluarans []models.Pengeluaran
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Where("already_posted = ?", 0).
+		Find(&pengeluarans).Error; err != nil {
+		return err
+	}
+
+	if pengeluarans == nil {
+		return errors.New("no remaining data to posting")
+	}
+
+	var kas models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		First(&kas).Error; err != nil {
+		return err
+	}
+
+	var hutang models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		First(&hutang).Error; err != nil {
+		return err
+	}
+
+	var kasBalance models.Balance
+	var hutangBalance models.Balance
+
+	_ = json.Unmarshal(kas.Balance, &kasBalance)
+	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
+
+	totalCash := 0.0
+	totalNonCash := 0.0
+
+	filteredPengeluaran := filterBiaya(pengeluarans)
+
+	for _, value := range filteredPengeluaran {
+		if value.Payment == "Tunai" {
+			totalCash += float64(value.Total)
+		} else {
+			totalNonCash += float64(value.Total)
+		}
+	}
+
+	totalCashBalanceRaw := models.Balance{
+		Debit:  kasBalance.Debit - totalCash,
+		Credit: 0,
+	}
+
+	totalNonCashBalanceRaw := models.Balance{
+		Debit:  0,
+		Credit: hutangBalance.Credit + totalNonCash,
+	}
+
+	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
+	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
+
+	kas.Balance = cashFormatted
+	hutang.Balance = nonCashFormatted
+
+	for _, value := range filteredPengeluaran {
+		value.AlreadyPosted = 1
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Kas").
+		Save(&kas).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Hutang Dagang").
+		Save(&hutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Model(&models.Pengeluaran{}).
+		Save(&filteredPengeluaran).Error; err != nil {
+		return err
+	}
+
+	log.Println("Posting Biaya Biaya Complete!")
+
+	return nil
+}
+
+func filterBiaya(dataList []models.Pengeluaran) []models.Pengeluaran {
+	var biayaList []models.Pengeluaran
+
+	keyWordBiaya := map[string]struct{}{
+		"Biaya Listrik":      {},
+		"Biaya Air":          {},
+		"Biaya Perbaikan":    {},
+		"Biaya Promosi":      {},
+		"Biaya Ongkos Kirim": {},
+		"Biaya Pengemasan":   {},
+		"Biaya Gaji":         {},
+		"Biaya Sewa":         {},
+		"Biaya Lainnya":      {},
+	}
+
+	for _, data := range dataList {
+		_, isBiaya := keyWordBiaya[data.Name]
+		if isBiaya {
+			biayaList = append(biayaList, data)
+		}
+	}
+
+	return biayaList
+}
