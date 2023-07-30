@@ -132,8 +132,6 @@ func PostingUseCase(db *gorm.DB) {
 		log.Println("Error when do job:", err)
 	}
 
-	// Currently not implemented, still search how to balance if add this
-
 	c.Start()
 
 	select {}
