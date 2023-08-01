@@ -70,6 +70,14 @@ func (u *usecase) PostingPemasukkan() error {
 		return err
 	}
 
+	var modal models.BalanceSheet
+	if err := u.db.Model(&models.BalanceSheet{}).
+		Where("month = ?", time.Now().Month()).
+		Where("account_name = ?", "Modal").
+		First(&modal).Error; err != nil {
+		return err
+	}
+
 	totalPenjualanCash := 0.0
 	totalPenjualanNonCash := 0.0
 
@@ -89,6 +97,7 @@ func (u *usecase) PostingPemasukkan() error {
 	var kasBalanceInDb models.Balance
 	var penjualanBalanceInDb models.Balance
 	var piutangBalanceInDb models.Balance
+	var modalBalance models.Balance
 
 	err := json.Unmarshal(kas.Balance, &kasBalanceInDb)
 
@@ -108,6 +117,8 @@ func (u *usecase) PostingPemasukkan() error {
 		return err
 	}
 
+	_ = json.Unmarshal(modal.Balance, &modalBalance)
+
 	newKas := models.Balance{
 		Debit:  kasBalanceInDb.Debit + totalPenjualanCash,
 		Credit: kasBalanceInDb.Credit,
@@ -121,6 +132,11 @@ func (u *usecase) PostingPemasukkan() error {
 	newPiutang := models.Balance{
 		Debit:  piutangBalanceInDb.Debit + totalPenjualanNonCash,
 		Credit: piutangBalanceInDb.Credit,
+	}
+
+	newModal := models.Balance{
+		Debit:  0,
+		Credit: modalBalance.Credit + totalPenjualan,
 	}
 
 	kasFormatted, err := json.Marshal(&newKas)
@@ -141,9 +157,16 @@ func (u *usecase) PostingPemasukkan() error {
 		return err
 	}
 
+	modalFormatted, err := json.Marshal(&newModal)
+
+	if err != nil {
+		return err
+	}
+
 	kas.Balance = kasFormatted
 	penjualan.Balance = penjualanFormatted
 	piutang.Balance = piutangFormatted
+	modal.Balance = modalFormatted
 
 	if err := u.db.Save(&kas).Error; err != nil {
 		return err
@@ -154,6 +177,10 @@ func (u *usecase) PostingPemasukkan() error {
 	}
 
 	if err := u.db.Save(&piutang).Error; err != nil {
+		return err
+	}
+
+	if err := u.db.Save(&modal).Error; err != nil {
 		return err
 	}
 
@@ -207,23 +234,13 @@ func (u *usecase) PostingBahanBaku() error {
 		return err
 	}
 
-	var modal models.BalanceSheet
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		First(&modal).Error; err != nil {
-		return err
-	}
-
 	var kasBalance models.Balance
 	var hutangBalance models.Balance
 	var bahanBakuBalance models.Balance
-	var modalBalance models.Balance
 
 	_ = json.Unmarshal(kas.Balance, &kasBalance)
 	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
 	_ = json.Unmarshal(bahanBaku.Balance, &bahanBakuBalance)
-	_ = json.Unmarshal(modal.Balance, &modalBalance)
 
 	totalCash := 0.0
 	totalNonCash := 0.0
@@ -254,20 +271,13 @@ func (u *usecase) PostingBahanBaku() error {
 		Credit: 0,
 	}
 
-	totalModal := models.Balance{
-		Debit:  0,
-		Credit: modalBalance.Credit - totalCash,
-	}
-
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
 	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
 	totalFormatted, _ := json.Marshal(&totalRaw)
-	modalFormatted, _ := json.Marshal(&totalModal)
 
 	kas.Balance = cashFormatted
 	hutang.Balance = nonCashFormatted
 	bahanBaku.Balance = totalFormatted
-	modal.Balance = modalFormatted
 
 	if err := u.db.Model(&models.BalanceSheet{}).
 		Where("month = ?", time.Now().Month()).
@@ -287,13 +297,6 @@ func (u *usecase) PostingBahanBaku() error {
 		Where("month = ?", time.Now().Month()).
 		Where("account_name = ?", "Bahan Baku").
 		Save(&bahanBaku).Error; err != nil {
-		return err
-	}
-
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		Save(&modal).Error; err != nil {
 		return err
 	}
 
@@ -355,23 +358,13 @@ func (u *usecase) PostingBarangDagang() error {
 		return err
 	}
 
-	var modal models.BalanceSheet
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		First(&modal).Error; err != nil {
-		return err
-	}
-
 	var kasBalance models.Balance
 	var hutangBalance models.Balance
 	var barangDagangBalance models.Balance
-	var modalBalance models.Balance
 
 	_ = json.Unmarshal(kas.Balance, &kasBalance)
 	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
 	_ = json.Unmarshal(barangDagang.Balance, &barangDagangBalance)
-	_ = json.Unmarshal(modal.Balance, &modalBalance)
 
 	totalCash := 0.0
 	totalNonCash := 0.0
@@ -401,20 +394,13 @@ func (u *usecase) PostingBarangDagang() error {
 		Credit: 0,
 	}
 
-	totalModal := models.Balance{
-		Debit:  0,
-		Credit: modalBalance.Credit - totalCash,
-	}
-
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
 	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
 	totalFormatted, _ := json.Marshal(&totalRaw)
-	modalFormatted, _ := json.Marshal(&totalModal)
 
 	kas.Balance = cashFormatted
 	hutang.Balance = nonCashFormatted
 	barangDagang.Balance = totalFormatted
-	modal.Balance = modalFormatted
 
 	// for _, value := range pengeluarans {
 	// 	value.AlreadyPosted = 1
@@ -438,13 +424,6 @@ func (u *usecase) PostingBarangDagang() error {
 		Where("month = ?", time.Now().Month()).
 		Where("account_name = ?", "Barang Dagang").
 		Save(&barangDagang).Error; err != nil {
-		return err
-	}
-
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		Save(&modal).Error; err != nil {
 		return err
 	}
 
@@ -499,23 +478,13 @@ func (u *usecase) PostingBahanTambahan() error {
 		return err
 	}
 
-	var modal models.BalanceSheet
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		First(&modal).Error; err != nil {
-		return err
-	}
-
 	var kasBalance models.Balance
 	var hutangBalance models.Balance
 	var bahanTambahanBalance models.Balance
-	var modalBalance models.Balance
 
 	_ = json.Unmarshal(kas.Balance, &kasBalance)
 	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
 	_ = json.Unmarshal(bahanTambahan.Balance, &bahanTambahanBalance)
-	_ = json.Unmarshal(modal.Balance, &modalBalance)
 
 	totalCash := 0.0
 	totalNonCash := 0.0
@@ -545,20 +514,13 @@ func (u *usecase) PostingBahanTambahan() error {
 		Credit: 0,
 	}
 
-	totalModal := models.Balance{
-		Debit:  0,
-		Credit: modalBalance.Credit - totalCash,
-	}
-
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
 	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
 	totalFormatted, _ := json.Marshal(&totalRaw)
-	modalFormatted, _ := json.Marshal(&totalModal)
 
 	kas.Balance = cashFormatted
 	hutang.Balance = nonCashFormatted
 	bahanTambahan.Balance = totalFormatted
-	modal.Balance = modalFormatted
 
 	// for _, value := range pengeluarans {
 	// 	value.AlreadyPosted = 1
@@ -582,13 +544,6 @@ func (u *usecase) PostingBahanTambahan() error {
 		Where("month = ?", time.Now().Month()).
 		Where("account_name = ?", "Bahan Tambahan").
 		Save(&bahanTambahan).Error; err != nil {
-		return err
-	}
-
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		Save(&modal).Error; err != nil {
 		return err
 	}
 
@@ -650,23 +605,13 @@ func (u *usecase) PostingPeralatan() error {
 		return err
 	}
 
-	var modal models.BalanceSheet
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		First(&modal).Error; err != nil {
-		return err
-	}
-
 	var kasBalance models.Balance
 	var hutangBalance models.Balance
 	var peralatanBalance models.Balance
-	var modalBalance models.Balance
 
 	_ = json.Unmarshal(kas.Balance, &kasBalance)
 	_ = json.Unmarshal(hutang.Balance, &hutangBalance)
 	_ = json.Unmarshal(peralatan.Balance, &peralatanBalance)
-	_ = json.Unmarshal(modal.Balance, &modalBalance)
 
 	totalCash := 0.0
 	totalNonCash := 0.0
@@ -696,20 +641,13 @@ func (u *usecase) PostingPeralatan() error {
 		Credit: 0,
 	}
 
-	totalModal := models.Balance{
-		Debit:  0,
-		Credit: modalBalance.Credit - totalCash,
-	}
-
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
 	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
 	totalFormatted, _ := json.Marshal(&totalRaw)
-	modalFormatted, _ := json.Marshal(&totalModal)
 
 	kas.Balance = cashFormatted
 	hutang.Balance = nonCashFormatted
 	peralatan.Balance = totalFormatted
-	modal.Balance = modalFormatted
 
 	// for _, value := range pengeluarans {
 	// 	value.AlreadyPosted = 1
@@ -733,13 +671,6 @@ func (u *usecase) PostingPeralatan() error {
 		Where("month = ?", time.Now().Month()).
 		Where("account_name = ?", "Peralatan").
 		Save(&peralatan).Error; err != nil {
-		return err
-	}
-
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		Save(&modal).Error; err != nil {
 		return err
 	}
 
@@ -812,9 +743,7 @@ func (u *usecase) PostingBayarHutang() error {
 	total := 0.0
 
 	for _, value := range pengeluarans {
-		if value.Payment == "Tunai" {
-			total += float64(value.Total)
-		}
+		total += float64(value.Total)
 	}
 
 	totalCashBalanceRaw := models.Balance{
@@ -829,7 +758,7 @@ func (u *usecase) PostingBayarHutang() error {
 
 	totalModal := models.Balance{
 		Debit:  0,
-		Credit: modalBalance.Credit - total,
+		Credit: modalBalance.Credit + total,
 	}
 
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
@@ -914,28 +843,16 @@ func (u *usecase) PostingBayarPiutang() error {
 		return err
 	}
 
-	var modal models.BalanceSheet
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		First(&modal).Error; err != nil {
-		return err
-	}
-
 	var kasBalance models.Balance
 	var piutangBalance models.Balance
-	var modalBalance models.Balance
 
 	_ = json.Unmarshal(kas.Balance, &kasBalance)
 	_ = json.Unmarshal(piutang.Balance, &piutangBalance)
-	_ = json.Unmarshal(modal.Balance, &modalBalance)
 
 	total := 0.0
 
 	for _, value := range pemasukkan {
-		if value.Payment == "Tunai" {
-			total += float64(value.Total)
-		}
+		total += float64(value.Total)
 	}
 
 	totalCashBalanceRaw := models.Balance{
@@ -948,18 +865,11 @@ func (u *usecase) PostingBayarPiutang() error {
 		Credit: 0,
 	}
 
-	totalModal := models.Balance{
-		Debit:  0,
-		Credit: modalBalance.Credit + total,
-	}
-
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
 	nonCashFormatted, _ := json.Marshal(&totalNonCashBalanceRaw)
-	modalFormatted, _ := json.Marshal(&totalModal)
 
 	kas.Balance = cashFormatted
 	piutang.Balance = nonCashFormatted
-	modal.Balance = modalFormatted
 
 	// for _, value := range pemasukkan {
 	// 	value.AlreadyPosted = 1
@@ -976,13 +886,6 @@ func (u *usecase) PostingBayarPiutang() error {
 		Where("month = ?", time.Now().Month()).
 		Where("account_name = ?", "Piutang Dagang").
 		Save(&piutang).Error; err != nil {
-		return err
-	}
-
-	if err := u.db.Model(&models.BalanceSheet{}).
-		Where("month = ?", time.Now().Month()).
-		Where("account_name = ?", "Modal").
-		Save(&modal).Error; err != nil {
 		return err
 	}
 
@@ -1064,6 +967,8 @@ func (u *usecase) PostingBiayaBiaya() error {
 		}
 	}
 
+	totalBiaya := totalCash + totalNonCash
+
 	totalCashBalanceRaw := models.Balance{
 		Debit:  kasBalance.Debit - totalCash,
 		Credit: 0,
@@ -1076,7 +981,7 @@ func (u *usecase) PostingBiayaBiaya() error {
 
 	totalModal := models.Balance{
 		Debit:  0,
-		Credit: modalBalance.Credit - totalCash,
+		Credit: modalBalance.Credit - totalBiaya,
 	}
 
 	cashFormatted, _ := json.Marshal(&totalCashBalanceRaw)
