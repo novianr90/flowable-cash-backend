@@ -1,7 +1,7 @@
 # FinTrack Backend
 
-FinTrack is an accounting information system that MSME can use to provide financial
-information for their needs. This is the codebase for BE used to be consumed on FE.
+FinTrack is an accounting information system that MSMEs can use to provide financial
+information for their needs. This is the codebase for BE that used to be consumed on FE.
 
 ### Features
 - **Record Transactions**: Easily input, update, and delete financial transactions. Each transaction can include details such as date, description, amount, and accounts involved.
@@ -19,7 +19,6 @@ information for their needs. This is the codebase for BE used to be consumed on 
 
 ### Usage
 ##### Expenses
-#
 | Method | Description | Endpoint |
 | :---:  | :---: | :---: | 
 | POST | Record Expenses Transaction | api/pengeluaran |
@@ -27,7 +26,6 @@ information for their needs. This is the codebase for BE used to be consumed on 
 | GET | Get 1 Expenses Transaction by ID | api/pengeluaran/ |
 
 ##### Incomes
-#
 | Method | Description | Endpoint |
 | :---:  | :---: | :---: | 
 | POST | Record Income Transaction | api/pemasukkan |
@@ -35,7 +33,6 @@ information for their needs. This is the codebase for BE used to be consumed on 
 | GET | Get 1 Income Transaction by ID | api/pemasukkan/ |
 
 ##### Transactions
-#
 | Method | Description | Endpoint |
 | :---:  | :---: | :---: | 
 | GET | Get All Transaction | api/transactions |
@@ -43,7 +40,6 @@ information for their needs. This is the codebase for BE used to be consumed on 
 | DELETE | Delete 1 Transaction by ID | api/transactions |
 
 ##### Accounts
-#
 | Method | Description | Endpoint |
 | :---:  | :---: | :---: | 
 | GET | Get All Accounts | /api/balance-sheets |
